@@ -53,7 +53,7 @@ Create an Azure Storage Account with ADLS Gen2 to store Iceberg tables written b
 
 **2.** Click **Create**.
 
-<img src="images/02-click-create.png" alt="Click Create" width="75%">
+<img src="images/02-click-create.png" alt="Click Create" width="55%">
 
 <br>
 
