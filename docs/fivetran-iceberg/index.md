@@ -123,13 +123,13 @@ This setting applies to Azure Files, which we are not using in this setup.
 
 **9.** Navigate to **Review + create**, review all selections, and click **Create**.
 
-![Review and Create](images/09-review-and-create.png)
+<img src="images/09-review-and-create.png" alt="Review and Create" width="75%">
 
 <br>
 
 **10.** Once deployment completes, click **Go to resource**.
 
-![Deployment Complete](images/10-deployment-complete.png)
+<img src="images/10-deployment-complete.png" alt="Deployment Complete" width="75%">
 
 ### Create a Container
 
