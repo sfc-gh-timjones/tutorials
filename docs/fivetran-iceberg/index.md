@@ -167,13 +167,13 @@ Create an Azure service principal so Fivetran can write Iceberg data to your ADL
 
 **14.** In the Azure Portal, search for **App registrations** and select it.
 
-<img src="images/14-search-app-registrations.png" alt="Search App Registrations" width="90%">
+<img src="images/14-search-app-registrations.png" alt="Search App Registrations" width="45%">
 
 <br>
 
 **15.** Click **+ New registration**.
 
-<img src="images/15-new-registration.png" alt="New Registration" width="90%">
+<img src="images/15-new-registration.png" alt="New Registration" width="45%">
 
 <br>
 
