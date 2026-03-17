@@ -1,0 +1,1262 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://sfc-gh-timjones.github.io/tutorials/fivetran-iceberg/">
+      
+      
+        <link rel="prev" href="..">
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
+    
+    
+      
+        <title>Fivetran + Iceberg + Snowflake - Tim Jones - Guides</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#fivetran-iceberg-snowflake-azure" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Tim Jones - Guides" class="md-header__button md-logo" aria-label="Tim Jones - Guides" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Tim Jones - Guides
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Fivetran + Iceberg + Snowflake
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/sfc-gh-timjones/tutorials" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    sfc-gh-timjones/tutorials
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Tim Jones - Guides" class="md-nav__button md-logo" aria-label="Tim Jones - Guides" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Tim Jones - Guides
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/sfc-gh-timjones/tutorials" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    sfc-gh-timjones/tutorials
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fivetran + Iceberg + Snowflake
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fivetran + Iceberg + Snowflake
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-provision-cloud-storage-azure-adls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Provision Cloud Storage (Azure ADLS)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Provision Cloud Storage (Azure ADLS)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create-a-storage-account" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Create a Storage Account
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-a-container" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Create a Container
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-enable-fivetran-access-to-adls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Enable Fivetran Access to ADLS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Enable Fivetran Access to ADLS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#register-an-app-service-principal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Register an App (Service Principal)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-a-client-secret" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Create a Client Secret
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#assign-storage-permissions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Assign Storage Permissions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-configure-fivetran-data-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Configure Fivetran Data Pipeline
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Configure Fivetran Data Pipeline">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create-an-adls-destination" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Create an ADLS Destination
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-a-source-connection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Create a Source Connection
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-connect-snowflake-to-adls-iceberg-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Connect Snowflake to ADLS Iceberg Data
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Connect Snowflake to ADLS Iceberg Data">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#grant-snowflake-access-to-adls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Grant Snowflake Access to ADLS
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-create-a-catalog-linked-database" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Create a Catalog-Linked Database
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-query-iceberg-tables-from-snowflake" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Query Iceberg Tables from Snowflake
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-provision-cloud-storage-azure-adls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Provision Cloud Storage (Azure ADLS)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Provision Cloud Storage (Azure ADLS)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create-a-storage-account" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Create a Storage Account
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-a-container" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Create a Container
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-enable-fivetran-access-to-adls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Enable Fivetran Access to ADLS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Enable Fivetran Access to ADLS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#register-an-app-service-principal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Register an App (Service Principal)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-a-client-secret" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Create a Client Secret
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#assign-storage-permissions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Assign Storage Permissions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-configure-fivetran-data-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Configure Fivetran Data Pipeline
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Configure Fivetran Data Pipeline">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create-an-adls-destination" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Create an ADLS Destination
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-a-source-connection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Create a Source Connection
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-connect-snowflake-to-adls-iceberg-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Connect Snowflake to ADLS Iceberg Data
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Connect Snowflake to ADLS Iceberg Data">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#grant-snowflake-access-to-adls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Grant Snowflake Access to ADLS
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-create-a-catalog-linked-database" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Create a Catalog-Linked Database
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-query-iceberg-tables-from-snowflake" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Query Iceberg Tables from Snowflake
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="fivetran-iceberg-snowflake-azure">Fivetran + Iceberg + Snowflake (Azure)</h1>
+<p>Connect Fivetran to Azure ADLS Gen2 as an Apache Iceberg destination, then integrate with Snowflake to query open lakehouse data using a catalog-linked database.</p>
+<div class="admonition warning">
+<p class="admonition-title">Adapt to Your Environment</p>
+<p>This guide is a reference implementation demonstrated in a simplified environment.
+Your networking, security policies, IAM configurations, and infrastructure will differ.
+Always validate against your organization's requirements before implementing.</p>
+</div>
+<h2 id="architecture">Architecture</h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Azure SQL Database
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>       │
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>       ▼
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>   Fivetran
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>       │
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>       ▼
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>  Azure ADLS Gen2  ◄──  Iceberg Tables
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>       │
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>       ▼
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>   Snowflake
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>   (Catalog-Linked Database)
+</code></pre></div>
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+<li>Azure account with permissions to create storage accounts, app registrations, and role assignments</li>
+<li>Fivetran account with permissions to configure connectors and destinations</li>
+<li>Snowflake account (Enterprise edition or higher) with <code>ACCOUNTADMIN</code> role</li>
+<li>An Azure SQL Database with data to sync (or another supported Fivetran source)</li>
+</ul>
+<hr />
+<h2 id="1-provision-cloud-storage-azure-adls">1. Provision Cloud Storage (Azure ADLS)</h2>
+<p>Create an Azure Storage Account with ADLS Gen2 to store Iceberg tables written by Fivetran.</p>
+<div class="admonition note">
+<p class="admonition-title">Environment-Specific</p>
+<p>The storage account settings below are for demonstration. Consult your cloud/security team
+for your organization's required networking, encryption, and access configurations.</p>
+</div>
+<h3 id="create-a-storage-account">Create a Storage Account</h3>
+<p><strong>1.</strong> In the Azure Portal, search for <strong>Storage accounts</strong> and select it.</p>
+<p><img alt="Search Storage Accounts" src="images/01-search-storage-accounts.png" /></p>
+<p><br></p>
+<p><strong>2.</strong> Click <strong>Create</strong>.</p>
+<p><img src="images/02-click-create.png" alt="Click Create" width="75%"></p>
+<p><br></p>
+<p><strong>3.</strong> Fill in the <strong>Basics</strong> tab:</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Subscription</strong></td>
+<td>Your Azure subscription</td>
+</tr>
+<tr>
+<td><strong>Resource group</strong></td>
+<td>Create new or select existing</td>
+</tr>
+<tr>
+<td><strong>Storage account name</strong></td>
+<td>Must be globally unique (e.g., <code>timjonesiceberg</code>)</td>
+</tr>
+<tr>
+<td><strong>Region</strong></td>
+<td>East US 2 (match your Snowflake region if possible)</td>
+</tr>
+<tr>
+<td><strong>Preferred storage type</strong></td>
+<td>Azure Blob Storage or Azure Data Lake Storage Gen 2</td>
+</tr>
+<tr>
+<td><strong>Performance</strong></td>
+<td>Standard</td>
+</tr>
+<tr>
+<td><strong>Redundancy</strong></td>
+<td>Locally-redundant storage (LRS) — adjust to your requirements</td>
+</tr>
+</tbody>
+</table>
+<p>Click <strong>Next: Advanced</strong>.</p>
+<p><img alt="Basics Tab" src="images/03-basics-tab.png" /></p>
+<p><br></p>
+<p><strong>4.</strong> On the <strong>Advanced</strong> tab, leave all defaults <strong>except</strong>:</p>
+<div class="admonition danger">
+<p class="admonition-title">Critical Setting</p>
+<p><strong>Enable hierarchical namespace</strong> must be checked. This is what makes the storage account
+ADLS Gen2 rather than standard Blob Storage. Without this, the Iceberg integration will not work.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Review all other settings on this tab with your internal security team.</p>
+</div>
+<p><img alt="Advanced Tab" src="images/04-advanced-tab.png" /></p>
+<p><br></p>
+<p><strong>5.</strong> On the <strong>Networking</strong> tab, all defaults were left as-is for this demo.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Review networking settings against your internal networking requirements. Your organization
+may require private endpoints, specific firewall rules, or restricted virtual network access.</p>
+</div>
+<p><img alt="Networking Tab" src="images/05-networking-tab.png" /></p>
+<p><br></p>
+<p><strong>6.</strong> On the <strong>Data protection</strong> tab, uncheck <strong>Enable soft delete for file shares</strong>.</p>
+<p>This setting applies to Azure Files, which we are not using in this setup.</p>
+<p><img alt="Data Protection Tab" src="images/06-data-protection-tab.png" /></p>
+<p><br></p>
+<p><strong>7.</strong> On the <strong>Encryption</strong> tab, all defaults were left as-is.</p>
+<p><img alt="Encryption Tab" src="images/07-encryption-tab.png" /></p>
+<p><br></p>
+<p><strong>8.</strong> On the <strong>Tags</strong> tab, no tags were added for this demo.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>In production, add tags that align with your organization's requirements (e.g., <code>Environment</code>, <code>Owner</code>, <code>CostCenter</code>).</p>
+</div>
+<p><img alt="Tags Tab" src="images/08-tags-tab.png" /></p>
+<p><br></p>
+<p><strong>9.</strong> Navigate to <strong>Review + create</strong>, review all selections, and click <strong>Create</strong>.</p>
+<p><img alt="Review and Create" src="images/09-review-and-create.png" /></p>
+<p><br></p>
+<p><strong>10.</strong> Once deployment completes, click <strong>Go to resource</strong>.</p>
+<p><img alt="Deployment Complete" src="images/10-deployment-complete.png" /></p>
+<h3 id="create-a-container">Create a Container</h3>
+<p><br></p>
+<p><strong>11.</strong> In the left-hand pane, navigate to <strong>Data storage</strong> and select <strong>Containers</strong>.</p>
+<p><img alt="Navigate to Containers" src="images/11-navigate-containers.png" /></p>
+<p><br></p>
+<p><strong>12.</strong> Click <strong>+ Add container</strong>.</p>
+<p><img alt="Add Container" src="images/12-add-container.png" /></p>
+<p><br></p>
+<p><strong>13.</strong> Give the container a name (e.g., <code>landing</code>) and keep all defaults. Click <strong>Create</strong>.</p>
+<p><img alt="Name Container" src="images/13-name-container.png" /></p>
+<div class="admonition success">
+<p class="admonition-title">Storage Setup Complete</p>
+<p>Your Azure Storage Account and ADLS Gen2 container are now provisioned and ready for Fivetran to write Iceberg data.</p>
+</div>
+<hr />
+<h2 id="2-enable-fivetran-access-to-adls">2. Enable Fivetran Access to ADLS</h2>
+<p>Create an Azure service principal so Fivetran can write Iceberg data to your ADLS container.</p>
+<h3 id="register-an-app-service-principal">Register an App (Service Principal)</h3>
+<p><strong>14.</strong> In the Azure Portal, search for <strong>App registrations</strong> and select it.</p>
+<p><img alt="Search App Registrations" src="images/14-search-app-registrations.png" /></p>
+<p><br></p>
+<p><strong>15.</strong> Click <strong>+ New registration</strong>.</p>
+<p><img alt="New Registration" src="images/15-new-registration.png" /></p>
+<p><br></p>
+<p><strong>16.</strong> Give the application a descriptive name (e.g., <code>fivetran-adls-access-timjones</code>). Select the appropriate account type for your organization. Click <strong>Register</strong>.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Write down the application name you chose — you will need it later when assigning storage permissions.</p>
+</div>
+<p><img alt="Register Application" src="images/16-register-application.png" /></p>
+<p><br></p>
+<p><strong>17.</strong> On the app overview page, copy the <strong>Application (client) ID</strong> and <strong>Directory (tenant) ID</strong>. Save these in a secure location — you will need them later.</p>
+<p><img alt="App Overview IDs" src="images/17-app-overview-ids.png" /></p>
+<h3 id="create-a-client-secret">Create a Client Secret</h3>
+<p><br></p>
+<p><strong>18.</strong> In the left-hand pane under <strong>Manage</strong>, select <strong>Certificates &amp; secrets</strong>.</p>
+<p><img alt="Certificates &amp; Secrets" src="images/18-certificates-secrets.png" /></p>
+<p><br></p>
+<p><strong>19.</strong> Click <strong>+ New client secret</strong>.</p>
+<p><img alt="New Client Secret" src="images/19-new-client-secret.png" /></p>
+<p><br></p>
+<p><strong>20.</strong> Give the secret a description and set the expiration according to your organization's requirements.</p>
+<p><img alt="Add Client Secret" src="images/20-add-client-secret.png" /></p>
+<p><br></p>
+<p><strong>21.</strong> Copy the <strong>Value</strong> and store it in a secure location. This is your client secret — it will not be shown again.</p>
+<div class="admonition danger">
+<p class="admonition-title">Important</p>
+<p>The client secret value is only displayed once. If you lose it, you will need to create a new secret.</p>
+</div>
+<p><img alt="Copy Secret Value" src="images/21-copy-secret-value.png" /></p>
+<p><br></p>
+<h3 id="assign-storage-permissions">Assign Storage Permissions</h3>
+<p>Now we allow this service principal to access your ADLS storage account.</p>
+<p><strong>22.</strong> Navigate back to the storage account created in Section 1 by searching for its name in the Azure Portal search bar. In the left-hand pane, click <strong>Access Control (IAM)</strong>.</p>
+<p><img alt="Access Control IAM" src="images/22-access-control-iam.png" /></p>
+<p><br></p>
+<p><strong>23.</strong> Click <strong>Add role assignment</strong>.</p>
+<p><img alt="Add Role Assignment" src="images/23-add-role-assignment.png" /></p>
+<p><br></p>
+<p><strong>24.</strong> Search for <strong>Storage Blob Data Contributor</strong>, select the role, and click <strong>Next</strong>.</p>
+<p><img alt="Storage Blob Data Contributor" src="images/24-storage-blob-data-contributor.png" /></p>
+<p><br></p>
+<p><strong>25.</strong> Click <strong>+ Select members</strong>.</p>
+<p><img alt="Select Members" src="images/25-select-members.png" /></p>
+<p><br></p>
+<p><strong>26.</strong> In the <strong>Select members</strong> pane on the right, search for the name you used when registering the application. Select it, then click <strong>Select</strong> at the bottom.</p>
+<p><img alt="Search and Select Member" src="images/26-search-select-member.png" /></p>
+<p><br></p>
+<p><strong>27.</strong> Add any <strong>Conditions</strong> if applicable to your organization. No conditions were added in this demo. Then click <strong>Review + assign</strong>.</p>
+<p><img alt="Conditions and Review + Assign" src="images/27-conditions-review-assign.png" /></p>
+<div class="admonition success">
+<p class="admonition-title">Fivetran Access Setup Complete</p>
+<p>You will see a notification confirming the role assignment was successful. Your service principal now has read/write access to the ADLS storage account and is ready for Fivetran to use.</p>
+</div>
+<hr />
+<h2 id="3-configure-fivetran-data-pipeline">3. Configure Fivetran Data Pipeline</h2>
+<p>Set up a Fivetran destination to write Iceberg tables to your ADLS container.</p>
+<h3 id="create-an-adls-destination">Create an ADLS Destination</h3>
+<p><strong>28.</strong> Log in to Fivetran and navigate to the <strong>Destinations</strong> tab in the left-hand sidebar.</p>
+<p><img alt="Fivetran Destinations" src="images/28-fivetran-destinations.png" /></p>
+<p><br></p>
+<p><strong>29.</strong> Click <strong>+ Add destination</strong> in the top right-hand corner.</p>
+<p><img alt="Add Destination" src="images/29-add-destination.png" /></p>
+<p><br></p>
+<p><strong>30.</strong> Search for <strong>Azure Data Lake Storage</strong> and click <strong>Set up</strong>.</p>
+<p><img src="images/30-search-adls-destination.png" alt="Search ADLS Destination" width="75%"></p>
+<p><br></p>
+<p><strong>31.</strong> Give the new destination a descriptive name.</p>
+<p><img src="images/31-name-destination.png" alt="Name Destination" width="60%"></p>
+<p><br></p>
+<p><strong>32.</strong> Fill in the destination details using the Azure configurations from Section 2:</p>
+<table>
+<thead>
+<tr>
+<th>Fivetran Field</th>
+<th>Azure Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Client Id</strong></td>
+<td>Application (client) ID from the app registration</td>
+</tr>
+<tr>
+<td><strong>Tenant Id</strong></td>
+<td>Directory (tenant) ID from the app registration</td>
+</tr>
+<tr>
+<td><strong>Client Secret</strong></td>
+<td>The client secret value you saved</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>The <strong>Application (client) ID</strong> maps to Fivetran's <strong>Client Id</strong> field, and the <strong>Directory (tenant) ID</strong> maps to the <strong>Tenant Id</strong> field.</p>
+</div>
+<p><img alt="Destination Details" src="images/32-destination-details.png" /></p>
+<p><br></p>
+<p><strong>33.</strong> Do <strong>not</strong> select the OneLake or Unity options — we will use the default Fivetran REST Catalog, which uses the Polaris catalog. Configure the remaining options as required by your organization.</p>
+<p><img alt="Catalog and Options" src="images/33-catalog-and-options.png" /></p>
+<p><br></p>
+<p><strong>34.</strong> Click <strong>Save &amp; Test</strong> and ensure all connection tests pass. Once successful, click <strong>View Destination</strong> at the bottom to see the destination details.</p>
+<div class="admonition success">
+<p class="admonition-title">Destination Configured</p>
+<p>Your Fivetran ADLS destination is now configured and ready to receive data as Iceberg tables.</p>
+</div>
+<p><img src="images/34-save-test-destination.png" alt="Save and Test Destination" width="70%"></p>
+<h3 id="create-a-source-connection">Create a Source Connection</h3>
+<p><br></p>
+<p><strong>35.</strong> Navigate to the <strong>Connections</strong> tab in the left-hand sidebar.</p>
+<p><img src="images/35-connectors-tab.png" alt="Connectors Tab" width="25%"></p>
+<p><br></p>
+<p><strong>36.</strong> You will see a connection for <strong>Fivetran Platform</strong> with your ADLS destination. This is normal — the Fivetran Platform Connector is a specialized, free connector that exports your Fivetran audit logs, usage metrics, and account metadata (like connector status and sync history) into a schema in your destination. It provides visibility into data lineage, monitoring of connector performance, and control over operational costs.</p>
+<p><img alt="Fivetran Platform Connector" src="images/36-fivetran-platform-connector.png" /></p>
+<p><br></p>
+<p><strong>37.</strong> Click <strong>+ Add connection</strong> in the top right-hand corner.</p>
+<p><img src="images/37-add-connection.png" alt="Add Connection" width="25%"></p>
+<p><br></p>
+<p><strong>38.</strong> Search for your source connector. In this tutorial, we are using <strong>Azure SQL Database</strong>. Click <strong>Set up</strong> for your connector.</p>
+<p><img alt="Search Connector" src="images/38-search-connector.png" /></p>
+<p><br></p>
+<p><strong>39.</strong> Select the ADLS destination you just set up.</p>
+<p><img alt="Select Destination" src="images/39-select-destination.png" /></p>
+<p><br></p>
+<p><strong>40.</strong> Configure the connection details for your source. For <strong>Authentication Method</strong>, select the option required by your organization's requirements.</p>
+<div class="admonition note">
+<p class="admonition-title">Source-Specific</p>
+<p>The configuration fields will vary depending on the source connector you selected. Refer to the <a href="https://fivetran.com/docs/connectors">Fivetran documentation</a> for your specific source.</p>
+</div>
+<p><img src="images/40-configure-source.png" alt="Configure Source" width="90%"></p>
+<p><br></p>
+<p><strong>41.</strong> Copy the Fivetran IPs listed and whitelist them in your source's firewall so that Fivetran can access it. Once whitelisted, click <strong>Save &amp; Test</strong>.</p>
+<p><img src="images/41-fivetran-ips-save-test.png" alt="Fivetran IPs and Save & Test" width="85%"></p>
+<p><br></p>
+<p><strong>42.</strong> After whitelisting the Fivetran IPs on your firewall, test the connection and ensure all connection tests pass. Click <strong>Continue</strong>.</p>
+<p><img src="images/42-connection-tests-passed.png" alt="Connection Tests Passed" width="60%"></p>
+<p><br></p>
+<p><strong>43.</strong> Select the data you want to sync, then click <strong>Save &amp; Continue</strong>.</p>
+<p><img alt="Select Data to Sync" src="images/43-select-data-to-sync.png" /></p>
+<p><br></p>
+<p><strong>44.</strong> Determine how you want Fivetran to detect changes in your source data.</p>
+<p><img src="images/44-determine-changes.png" alt="Determine Changes" width="65%"></p>
+<p><br></p>
+<p><strong>45.</strong> Click <strong>Start Initial Sync</strong> to begin syncing data from your source to ADLS as Iceberg tables.</p>
+<p><img alt="Start Initial Sync" src="images/45-start-initial-sync.png" /></p>
+<p><br></p>
+<p><strong>46.</strong> You will see a message confirming the historical sync was successful.</p>
+<div class="admonition success">
+<p class="admonition-title">Fivetran Pipeline Complete</p>
+<p>Your data is now syncing from your source into ADLS as Iceberg tables. Fivetran will continue to sync changes on the schedule you configured.</p>
+</div>
+<p><img alt="Sync Successful" src="images/46-sync-successful.png" /></p>
+<hr />
+<h2 id="4-connect-snowflake-to-adls-iceberg-data">4. Connect Snowflake to ADLS Iceberg Data</h2>
+<p>Create a Snowflake external volume and catalog integration so Snowflake can access the Iceberg tables in your ADLS container.</p>
+<p><strong>47.</strong> In Fivetran, navigate to <strong>Destinations</strong>, select your ADLS destination, and go to the <strong>Catalog Integration</strong> tab. Select <strong>Snowflake</strong> and copy the generated code.</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>This code will create two Snowflake objects:</p>
+<ul>
+<li>An <strong>External Volume</strong> — tells Snowflake where your Iceberg data lives in ADLS. <a href="https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-external-volume">Learn more</a>.</li>
+<li>A <strong>Catalog Integration</strong> — connects Snowflake to the Fivetran REST Catalog so it can discover and read your Iceberg tables. <a href="https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-catalog-integration">Learn more</a>.</li>
+</ul>
+</div>
+<p><img alt="Fivetran Catalog Integration" src="images/47-fivetran-catalog-integration.png" /></p>
+<p><br></p>
+<p><strong>48.</strong> Run the external volume statement in Snowflake. It should execute successfully.</p>
+<p><img alt="External Volume Success" src="images/48-external-volume-success.png" /></p>
+<p><br></p>
+<p><strong>49.</strong> Run the catalog integration statement in Snowflake. It should also execute successfully.</p>
+<div class="admonition success">
+<p class="admonition-title">Snowflake Integration Complete</p>
+<p>Your external volume and catalog integration are now configured. Snowflake can access your ADLS Iceberg data through the Fivetran REST Catalog.</p>
+</div>
+<p><img alt="Catalog Integration Success" src="images/49-catalog-integration-success.png" /></p>
+<p><br></p>
+<p><strong>50.</strong> Run the following command to describe the external volume and retrieve its properties:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">DESC</span><span class="w"> </span><span class="k">EXTERNAL</span><span class="w"> </span><span class="n">VOLUME</span><span class="w"> </span><span class="o">&lt;</span><span class="n">external_volume_name</span><span class="o">&gt;</span><span class="p">;</span>
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Run the following query <strong>immediately</strong> after the <code>DESC EXTERNAL VOLUME</code> command — it uses <code>LAST_QUERY_ID()</code> to parse the results.</p>
+</div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">SELECT</span><span class="w"> </span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="n">PARSE_JSON</span><span class="p">(</span><span class="ss">&quot;property_value&quot;</span><span class="p">):</span><span class="n">AZURE_MULTI_TENANT_APP_NAME</span><span class="w"> </span><span class="n">AZURE_MULTI_TENANT_APP_NAME</span><span class="p">,</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="n">PARSE_JSON</span><span class="p">(</span><span class="ss">&quot;property_value&quot;</span><span class="p">):</span><span class="n">AZURE_CONSENT_URL</span><span class="w"> </span><span class="n">AZURE_CONSENT_URL</span><span class="p">,</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="n">PARSE_JSON</span><span class="p">(</span><span class="ss">&quot;property_value&quot;</span><span class="p">):</span><span class="n">NAME</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">NAME</span><span class="w"> </span><span class="p">,</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="n">PARSE_JSON</span><span class="p">(</span><span class="ss">&quot;property_value&quot;</span><span class="p">):</span><span class="n">STORAGE_REGION</span><span class="w"> </span><span class="n">STORAGE_REGION</span><span class="p">,</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="n">PARSE_JSON</span><span class="p">(</span><span class="ss">&quot;property_value&quot;</span><span class="p">):</span><span class="n">AZURE_TENANT_ID</span><span class="w"> </span><span class="n">AZURE_TENANT_ID</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="k">FROM</span><span class="w"> </span><span class="k">TABLE</span><span class="p">(</span><span class="n">RESULT_SCAN</span><span class="p">(</span><span class="n">LAST_QUERY_ID</span><span class="p">()))</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="k">WHERE</span><span class="w"> </span><span class="ss">&quot;property&quot;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;STORAGE_LOCATION_1&#39;</span><span class="p">;</span>
+</code></pre></div>
+<h3 id="grant-snowflake-access-to-adls">Grant Snowflake Access to ADLS</h3>
+<p><strong>51.</strong> Navigate back to your storage account in the Azure Portal. Go to <strong>Access Control (IAM)</strong> and click <strong>Add role assignment</strong>.</p>
+<p><img alt="IAM Add Role Assignment" src="images/51-iam-add-role-assignment.png" /></p>
+<p><br></p>
+<p><strong>52.</strong> Search for <strong>Storage Blob Data Contributor</strong>, select the role, and click <strong>Next</strong>.</p>
+<p><img alt="Storage Blob Data Contributor" src="images/52-storage-blob-data-contributor.png" /></p>
+<p><br></p>
+<p><strong>53.</strong> Under <strong>Members</strong>, click <strong>+ Select members</strong>. Search for the Snowflake-generated service principal using the value from <code>AZURE_MULTI_TENANT_APP_NAME</code> (name will vary).</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Remove everything after the underscore in the <code>AZURE_MULTI_TENANT_APP_NAME</code> value — that portion is a timestamp. Only search for the text before the underscore.</p>
+</div>
+<p>Select the application, then click <strong>Select</strong> at the bottom. Leave <strong>Conditions</strong> as-is and click <strong>Review + assign</strong>.</p>
+<p><img src="images/53-select-snowflake-app-member.png" alt="Select Snowflake App Member" width="70%"></p>
+<p><br></p>
+<p><strong>54.</strong> Copy the <code>AZURE_CONSENT_URL</code> from the query results and paste it into your browser. Sign in as an Azure Admin and approve the application. This allows Snowflake's service principal to access your tenant.</p>
+<p>Wait 1–2 minutes for Azure RBAC propagation, then run the following in Snowflake to verify the external volume is working:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">SELECT</span><span class="w"> </span><span class="k">SYSTEM</span><span class="err">$</span><span class="n">VERIFY_EXTERNAL_VOLUME</span><span class="p">(</span><span class="s1">&#39;external_volume_name&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">Test</span><span class="p">;</span>
+</code></pre></div>
+<p>Ensure the output begins with <code>"success":true</code>.</p>
+<p><img alt="Verify External Volume" src="images/54-verify-external-volume.png" /></p>
+<div class="admonition success">
+<p class="admonition-title">External Volume Verified</p>
+<p>Snowflake can now read and write to your ADLS storage account.</p>
+</div>
+<hr />
+<h2 id="5-create-a-catalog-linked-database">5. Create a Catalog-Linked Database</h2>
+<p>Create a catalog-linked database in Snowflake that auto-discovers schemas and tables from the Fivetran catalog.</p>
+<p><strong>55.</strong> Run the following command to create a catalog-linked database. Name the database based on what makes the most sense for your data source.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">CREATE</span><span class="w"> </span><span class="k">OR</span><span class="w"> </span><span class="k">REPLACE</span><span class="w"> </span><span class="k">DATABASE</span><span class="w"> </span><span class="n">iceberg_fivetran_adls</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="n">LINKED_CATALOG</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="k">CATALOG</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;catalog_integration_name_here&#39;</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">  </span><span class="p">)</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">  </span><span class="n">EXTERNAL_VOLUME</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;external_volume_name_here&#39;</span><span class="p">;</span>
+</code></pre></div>
+<div class="admonition success">
+<p class="admonition-title">Catalog-Linked Database Created</p>
+<p>Your catalog-linked database is now created. Snowflake will auto-discover schemas and tables from the Fivetran Iceberg catalog.</p>
+</div>
+<p><img src="images/55-catalog-linked-database-created.png" alt="Catalog-Linked Database Created" width="70%"></p>
+<p><br></p>
+<p><strong>56.</strong> Describe the database to see the schemas and tables that were auto-discovered:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">DESCRIBE</span><span class="w"> </span><span class="k">DATABASE</span><span class="w"> </span><span class="n">iceberg_fivetran_adls</span><span class="p">;</span>
+</code></pre></div>
+<p><img alt="Describe Database" src="images/56-describe-database.png" /></p>
+<p><br></p>
+<p><strong>57.</strong> Navigate to the <strong>Database Explorer</strong> in Snowflake to see the new catalog-linked database, its schemas, and tables. As new data arrives through the linked catalog, it will automatically be queryable and discoverable here — no manual table creation required.</p>
+<p><img src="images/57-database-explorer.png" alt="Database Explorer" width="80%"></p>
+<hr />
+<h2 id="6-query-iceberg-tables-from-snowflake">6. Query Iceberg Tables from Snowflake</h2>
+<p>Use standard SQL to query Iceberg tables stored in ADLS — no data copying required.</p>
+<p><strong>58.</strong> All your data is now available to query directly in Snowflake. These are Apache Iceberg tables — an open table format — meaning they are also available for other compute engines (e.g., Spark, Trino, Flink) to query in their respective environments.</p>
+<p><img src="images/58-query-iceberg-tables.png" alt="Query Iceberg Tables" width="75%"></p>
+<p><br></p>
+<p><strong>59.</strong> Query the data using standard SQL — it is fully queryable just like any other Snowflake table.</p>
+<p><img alt="Query Results" src="images/59-query-results.png" /></p>
+<div class="admonition success">
+<p class="admonition-title">Setup Complete</p>
+<p>You have successfully configured an end-to-end pipeline: Fivetran syncs data from your source into ADLS as Iceberg tables, and Snowflake queries them directly through a catalog-linked database.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["content.code.copy", "content.tabs.link", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
