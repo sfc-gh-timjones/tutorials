@@ -26,8 +26,8 @@ Azure SQL Database
 ## Prerequisites
 
 - Azure account with permissions to create storage accounts, app registrations, and role assignments
-- Fivetran account with permissions to configure connectors and destinations
-- Snowflake account (Enterprise edition or higher) with `ACCOUNTADMIN` role
+- Fivetran account (a [free trial](https://fivetran.com/signup) works) with permissions to configure connectors and destinations
+- Snowflake account (a [free trial](https://signup.snowflake.com/) works) with `ACCOUNTADMIN` role
 - An Azure SQL Database with data to sync (or another supported Fivetran source)
 
 ---
