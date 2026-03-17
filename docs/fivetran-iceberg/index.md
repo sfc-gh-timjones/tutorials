@@ -36,6 +36,9 @@ Azure SQL Database
 
 Create an Azure Storage Account with ADLS Gen2 to store Iceberg tables written by Fivetran.
 
+!!! abstract "What's happening"
+    At this stage, you are creating the cloud storage layer where Fivetran will write Iceberg data files and metadata. Think of this as provisioning the "landing zone" for your open lakehouse.
+
 !!! note "Environment-Specific"
     The storage account settings below are for demonstration. Consult your cloud/security team
     for your organization's required networking, encryption, and access configurations.
@@ -157,6 +160,9 @@ This setting applies to Azure Files, which we are not using in this setup.
 
 Create an Azure service principal so Fivetran can write Iceberg data to your ADLS container.
 
+!!! abstract "What's happening"
+    Fivetran needs authenticated access to write files into your ADLS container. Here you are creating a service principal (an identity for Fivetran) and granting it permission to read and write blob data in your storage account.
+
 ### Register an App (Service Principal)
 
 **14.** In the Azure Portal, search for **App registrations** and select it.
@@ -262,6 +268,9 @@ Now we allow this service principal to access your ADLS storage account.
 
 Set up a Fivetran destination to write Iceberg tables to your ADLS container.
 
+!!! abstract "What's happening"
+    In this section, you are telling Fivetran *where* to write data (the ADLS destination) and *what* data to sync (the source connector). Once the initial sync completes, Fivetran will continuously write Iceberg data files and metadata into your ADLS container on an ongoing schedule.
+
 ### Create an ADLS Destination
 
 **28.** Log in to Fivetran and navigate to the **Destinations** tab in the left-hand sidebar.
@@ -304,6 +313,9 @@ Set up a Fivetran destination to write Iceberg tables to your ADLS container.
 <br>
 
 **33.** Do **not** select the OneLake or Unity options — we will use the default Fivetran REST Catalog, which uses the Polaris catalog. Configure the remaining options as required by your organization.
+
+!!! abstract "What's happening"
+    The Fivetran REST Catalog tracks the location and schema of every Iceberg table Fivetran writes. Snowflake will later connect to this catalog to discover tables — rather than scanning files directly.
 
 ![Catalog and Options](images/33-catalog-and-options.png)
 
@@ -402,6 +414,9 @@ Set up a Fivetran destination to write Iceberg tables to your ADLS container.
 
 Create a Snowflake external volume and catalog integration so Snowflake can access the Iceberg tables in your ADLS container.
 
+!!! abstract "What's happening"
+    Here you are creating two Snowflake objects: an **external volume** (tells Snowflake *where* the Iceberg files live in ADLS) and a **catalog integration** (tells Snowflake *how* to discover tables via the Fivetran REST Catalog). Snowflake connects to the catalog — it does not scan the storage files directly.
+
 **47.** In Fivetran, navigate to **Destinations**, select your ADLS destination, and go to the **Catalog Integration** tab. Select **Snowflake** and copy the generated code.
 
 !!! info
@@ -451,6 +466,9 @@ WHERE "property" = 'STORAGE_LOCATION_1';
 
 ### Grant Snowflake Access to ADLS
 
+!!! abstract "What's happening"
+    When you created the external volume, Snowflake generated its own service principal in Azure. You now need to grant this Snowflake-managed identity the same storage permissions so Snowflake can read the Iceberg files written by Fivetran.
+
 **51.** Navigate back to your storage account in the Azure Portal. Go to **Access Control (IAM)** and click **Add role assignment**.
 
 ![IAM Add Role Assignment](images/51-iam-add-role-assignment.png)
@@ -495,6 +513,9 @@ Ensure the output begins with `"success":true`.
 
 Create a catalog-linked database in Snowflake that auto-discovers schemas and tables from the Fivetran catalog.
 
+!!! abstract "What's happening"
+    A catalog-linked database is a Snowflake database that is backed by an external catalog — in this case, the Fivetran REST Catalog. Snowflake automatically discovers and registers all schemas and tables from the catalog. As Fivetran syncs new data, the tables appear in Snowflake without any manual DDL.
+
 **55.** Run the following command to create a catalog-linked database. Name the database based on what makes the most sense for your data source.
 
 ```sql
@@ -508,7 +529,7 @@ CREATE OR REPLACE DATABASE iceberg_fivetran_adls
 !!! success "Catalog-Linked Database Created"
     Your catalog-linked database is now created. Snowflake will auto-discover schemas and tables from the Fivetran Iceberg catalog.
 
-<img src="images/55-catalog-linked-database-created.png" alt="Catalog-Linked Database Created" width="70%">
+<img src="images/55-catalog-linked-database-created.png" alt="Catalog-Linked Database Created" width="50%">
 
 <br>
 
@@ -524,7 +545,7 @@ DESCRIBE DATABASE iceberg_fivetran_adls;
 
 **57.** Navigate to the **Database Explorer** in Snowflake to see the new catalog-linked database, its schemas, and tables. As new data arrives through the linked catalog, it will automatically be queryable and discoverable here — no manual table creation required.
 
-<img src="images/57-database-explorer.png" alt="Database Explorer" width="80%">
+<img src="images/57-database-explorer.png" alt="Database Explorer" width="60%">
 
 ---
 
@@ -532,9 +553,12 @@ DESCRIBE DATABASE iceberg_fivetran_adls;
 
 Use standard SQL to query Iceberg tables stored in ADLS — no data copying required.
 
+!!! abstract "What's happening"
+    Snowflake reads the Iceberg metadata and data files directly from ADLS at query time — no data is copied or ingested into Snowflake. Because Iceberg is an open table format, these same files can also be queried by other compute engines (Spark, Trino, Flink) without duplicating data.
+
 **58.** All your data is now available to query directly in Snowflake. These are Apache Iceberg tables — an open table format — meaning they are also available for other compute engines (e.g., Spark, Trino, Flink) to query in their respective environments.
 
-<img src="images/58-query-iceberg-tables.png" alt="Query Iceberg Tables" width="75%">
+<img src="images/58-query-iceberg-tables.png" alt="Query Iceberg Tables" width="45%">
 
 <br>
 
@@ -544,3 +568,14 @@ Use standard SQL to query Iceberg tables stored in ADLS — no data copying requ
 
 !!! success "Setup Complete"
     You have successfully configured an end-to-end pipeline: Fivetran syncs data from your source into ADLS as Iceberg tables, and Snowflake queries them directly through a catalog-linked database.
+
+---
+
+## Final State
+
+| Component | Role |
+|-----------|------|
+| **Azure ADLS Gen2** | Data is stored as open Iceberg tables — accessible by any engine |
+| **Fivetran** | Manages ingestion from your source and maintains the Iceberg catalog |
+| **Snowflake** | Queries data directly from ADLS without copying or ingesting |
+| **Auto-discovery** | As Fivetran syncs new data, tables automatically appear and update in Snowflake |
