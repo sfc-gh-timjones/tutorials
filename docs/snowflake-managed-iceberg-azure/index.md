@@ -2,6 +2,10 @@
 
 Configure Snowflake-managed Apache Iceberg tables using Azure ADLS Gen2 as external storage.
 
+!!! quote "Source of Truth"
+    This guide is based on the official Snowflake documentation. Always refer to the official docs as the source of truth, as steps may change over time:
+    [Configure an external volume for Microsoft Azure](https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-external-volume-azure)
+
 !!! warning "Adapt to Your Environment"
     This guide is a reference implementation demonstrated in a simplified environment.
     Your networking, security policies, IAM configurations, and infrastructure will differ.
@@ -133,4 +137,142 @@ This setting applies to Azure Files, which we are not using in this setup.
 
 ---
 
-<!-- Remaining sections will be added as the tutorial is built out -->
+## 2. Retrieve Your Azure Tenant ID
+
+**14.** In the Azure Portal search bar, search for **Microsoft Entra ID** and select it from the dropdown.
+
+![Search Microsoft Entra ID](images/14-search-microsoft-entra-id.png)
+
+<br>
+
+**15.** On the **Microsoft Entra ID** overview page, locate and copy the **Directory (tenant) ID**. Save this value — you will need it when creating the external volume in Snowflake.
+
+![Copy Tenant ID](images/15-entra-id-tenant-id.png)
+
+
+<br>
+
+**15.** On the **Microsoft Entra ID** overview page, copy your **Directory (tenant) ID** and save it — you will need this when creating the External Volume in Snowflake.
+
+![Entra ID Tenant ID](images/15-entra-id-tenant-id.png)
+
+---
+
+## 3. Create an External Volume in Snowflake
+
+In Snowflake, open a **SQL worksheet**. We'll be creating an External Volume that points to your ADLS Gen2 container.
+
+Reference documentation: [CREATE EXTERNAL VOLUME](https://docs.snowflake.com/en/sql-reference/sql/create-external-volume) — scroll to the **Microsoft Azure** section and use the **Data Lake Storage** URL format.
+
+!!! abstract "What's happening"
+    An External Volume tells Snowflake where your cloud storage lives and gives it the credentials needed to read and write Iceberg data files. Without this, Snowflake has no way to access your ADLS container.
+
+**16.** Run the following SQL, replacing the placeholder values with your own:
+
+!!! note "**You Can Also Use the Snowflake UI**"
+    Rather than running SQL, you can configure the External Volume directly in the Snowflake web interface: [Configure an External Volume in the Snowflake UI](https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-external-volume-azure?utm_source=chatgpt.com#configure-an-external-volume-in-sf-web-interface)
+
+```sql
+CREATE OR REPLACE EXTERNAL VOLUME <external_volume_name>
+  STORAGE_LOCATIONS =
+    (
+      (
+        NAME = '<storage_location_name>'
+        STORAGE_PROVIDER = 'AZURE'
+        AZURE_TENANT_ID = '<your_tenant_id>'
+        STORAGE_BASE_URL = 'azure://<account>.dfs.core.windows.net/<container>/'
+      )
+    )
+  ALLOW_WRITES = TRUE;
+```
+
+!!! info "ALLOW_WRITES = TRUE"
+    This must be set to `TRUE` for Snowflake-managed Iceberg tables, as Snowflake will be writing both data files and Iceberg metadata to your external storage.
+
+!!! tip "Private Connectivity (Optional)"
+    The `USE_PRIVATELINK_ENDPOINT` parameter specifies whether to use outbound private connectivity to harden your security posture. For information about using this parameter, see [Private connectivity to external volumes for Microsoft Azure](https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-external-volume-azure-private).
+
+Here is a more complete example for reference:
+
+```sql
+CREATE EXTERNAL VOLUME IF NOT EXISTS my_external_volume_name 
+  STORAGE_LOCATIONS =
+    (
+      (
+        NAME = 'your_chosen_name_here' -- This can be any value, it does not need to match the name of anything in Azure. It makes sense to name it the same as the external volume.
+          STORAGE_PROVIDER = 'AZURE'
+          AZURE_TENANT_ID = '<tenant_id>'
+          STORAGE_BASE_URL = 'azure://<storage_account>.dfs.core.windows.net/<container>/' 
+          --This should match the name of your storage account and container. Can include <path> after container name to provide granular control over logical directories in the container.
+      )
+    )
+  ALLOW_WRITES = TRUE
+  COMMENT = 'My external volume to connect to azure for Iceberg.';
+```
+
+**17.** Once created, run the following to describe your external volume:
+
+```sql
+DESCRIBE EXTERNAL VOLUME my_external_volume_name;
+```
+
+<br>
+
+**18.** Immediately after, run the following query to extract the key properties from the result:
+
+```sql
+SELECT 
+    PARSE_JSON("property_value"):AZURE_MULTI_TENANT_APP_NAME AZURE_MULTI_TENANT_APP_NAME,
+    PARSE_JSON("property_value"):AZURE_CONSENT_URL AZURE_CONSENT_URL,
+    PARSE_JSON("property_value"):NAME AS NAME,
+    PARSE_JSON("property_value"):STORAGE_REGION STORAGE_REGION,
+    PARSE_JSON("property_value"):AZURE_TENANT_ID AZURE_TENANT_ID
+FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+WHERE "property" = 'STORAGE_LOCATION_1';
+```
+
+!!! important "Copy These Values"
+    From the query results, copy out the **`AZURE_CONSENT_URL`** and **`AZURE_MULTI_TENANT_APP_NAME`** — both will be needed for the remaining configuration steps.
+
+    See: [Step 2: Grant Snowflake Access to the Storage Location](https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-external-volume-azure#step-2-grant-snowflake-access-to-the-storage-location)
+
+---
+
+## 4. Grant Snowflake Access to the Storage Location
+
+**19.** In the Azure Portal:
+
+- Open your **storage account**
+- Go to **Access control (IAM)**
+- Click **Add role assignment**
+
+![IAM Add Role Assignment](images/19-iam-add-role-assignment.png)
+
+<br>
+
+**20.** Search for **Storage Blob Data Contributor**, select it, and click **Next** at the bottom of the screen.
+
+![Storage Blob Data Contributor](images/20-storage-blob-data-contributor.png)
+
+<br>
+
+**21.** Click **+ Select members**.
+
+![Select Members](images/21-select-members.png)
+
+<br>
+
+**22.** Search for the Snowflake-generated service principal using the value from `AZURE_MULTI_TENANT_APP_NAME`, select it, then click **Review + assign** to finish.
+
+!!! tip "Search Only the Prefix"
+    Remove everything after the underscore in the `AZURE_MULTI_TENANT_APP_NAME` value — that portion is a timestamp. Only search for the text **before** the underscore.
+
+![Search and Select Snowflake Principal](images/22-search-select-snowflake-principal.png)
+
+<br>
+
+**23.** Copy the `AZURE_CONSENT_URL` from the query results and paste it into your browser. Sign in as an Azure Admin and approve the application. This allows Snowflake's service principal to access your tenant.
+
+![Consent URL Approve](images/23-consent-url-approve.png)
+
+<!-- Remaining steps will be added -->
