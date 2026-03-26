@@ -173,28 +173,6 @@ Reference documentation: [CREATE EXTERNAL VOLUME](https://docs.snowflake.com/en/
     Rather than running SQL, you can configure the External Volume directly in the Snowflake web interface: [Configure an External Volume in the Snowflake UI](https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-external-volume-azure?utm_source=chatgpt.com#configure-an-external-volume-in-sf-web-interface)
 
 ```sql
-CREATE OR REPLACE EXTERNAL VOLUME <external_volume_name>
-  STORAGE_LOCATIONS =
-    (
-      (
-        NAME = '<storage_location_name>'
-        STORAGE_PROVIDER = 'AZURE'
-        AZURE_TENANT_ID = '<your_tenant_id>'
-        STORAGE_BASE_URL = 'azure://<account>.dfs.core.windows.net/<container>/'
-      )
-    )
-  ALLOW_WRITES = TRUE;
-```
-
-!!! info "ALLOW_WRITES = TRUE"
-    This must be set to `TRUE` for Snowflake-managed Iceberg tables, as Snowflake will be writing both data files and Iceberg metadata to your external storage.
-
-!!! tip "Private Connectivity (Optional)"
-    The `USE_PRIVATELINK_ENDPOINT` parameter specifies whether to use outbound private connectivity to harden your security posture. For information about using this parameter, see [Private connectivity to external volumes for Microsoft Azure](https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-external-volume-azure-private).
-
-Here is a more complete example for reference:
-
-```sql
 CREATE EXTERNAL VOLUME IF NOT EXISTS my_external_volume_name 
   STORAGE_LOCATIONS =
     (
@@ -273,6 +251,19 @@ WHERE "property" = 'STORAGE_LOCATION_1';
 
 **23.** Copy the `AZURE_CONSENT_URL` from the query results and paste it into your browser. Sign in as an Azure Admin and approve the application. This allows Snowflake's service principal to access your tenant.
 
+Wait 1–2 minutes for Azure RBAC propagation before proceeding.
+
 ![Consent URL Approve](images/23-consent-url-approve.png)
 
-<!-- Remaining steps will be added -->
+<br>
+
+**24.** Back in Snowflake, run the following to verify the external volume is working:
+
+```sql
+SELECT SYSTEM$VERIFY_EXTERNAL_VOLUME('my_external_volume_name') AS Test;
+```
+
+Ensure the output begins with `"success":true`.
+
+!!! success "External Volume Ready"
+    Your external volume is now fully configured. You're ready to start creating Snowflake-managed Iceberg tables that can be queried by Snowflake and other engines — including Apache Spark, Trino, and Flink — emphasizing the open, interoperable nature of the Iceberg format.
