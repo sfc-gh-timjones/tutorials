@@ -46,4 +46,6 @@ plugins:
 
 nav:
   - Home: index.md
-  - Fivetran + Iceberg + Snowflake: fivetran-iceberg/index.md
+  - Tutorials:
+    - Fivetran + Iceberg + Snowflake (Azure): fivetran-iceberg/index.md
+    - Snowflake Managed Iceberg Tables (Azure): snowflake-managed-iceberg-azure/index.md
