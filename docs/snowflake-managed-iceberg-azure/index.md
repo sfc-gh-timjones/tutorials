@@ -268,6 +268,8 @@ Ensure the output begins with `"success":true`.
 !!! success "External Volume Ready"
     Your external volume is now fully configured. You're ready to start creating Snowflake-managed Iceberg tables that can be queried by Snowflake and other engines — including Apache Spark, Trino, and Flink — emphasizing the open, interoperable nature of the Iceberg format.
 
+    See: [Access Iceberg tables using an external query engine](https://docs.snowflake.com/en/user-guide/tables-iceberg-access-using-external-query-engine-snowflake-horizon)
+
 ---
 
 ## 5. Create Your First Iceberg Table
