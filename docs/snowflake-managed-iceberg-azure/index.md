@@ -364,6 +364,8 @@ WHERE "property" IN ('AZURE_CONSENT_URL', 'AZURE_MULTI_TENANT_APP_NAME');
     - <a href="../assets/titanic.csv" download>titanic.csv</a>
     - <a href="../assets/titanic.parquet" download>titanic.parquet</a>
 
+    We'll show examples below of loading this data into Iceberg tables.
+
 <br>
 
 **28.** Back in Snowflake, create an External Stage pointing to your Azure storage location:
@@ -384,4 +386,77 @@ Once created, you can list the files visible to the stage using:
 
 ```sql
 LIST @azure_stage/raw_data_files/;
+```
+
+---
+
+## 8. Load Data into an Iceberg Table Using INFER_SCHEMA
+
+This example demonstrates how to create an Iceberg table by inferring the schema directly from a Parquet file using Snowflake's [`INFER_SCHEMA`](https://docs.snowflake.com/en/sql-reference/functions/infer_schema) function.
+
+**29.** First, create a file format for reading Parquet files:
+
+```sql
+CREATE OR REPLACE FILE FORMAT iceberg_parquet_format
+  TYPE = PARQUET
+  USE_VECTORIZED_SCANNER = TRUE;
+```
+
+**30.** Use `INFER_SCHEMA` to preview the schema that will be inferred from your Parquet file:
+
+```sql
+SELECT *
+  FROM TABLE(
+    INFER_SCHEMA(
+      LOCATION => '@azure_stage/raw_data_files/'
+      ,FILE_FORMAT => 'iceberg_parquet_format'
+      ,FILES => ('titanic.parquet')
+      ,KIND => 'ICEBERG'
+    )
+  );
+```
+
+**31.** Create the Iceberg table using the inferred schema:
+
+```sql
+CREATE OR REPLACE ICEBERG TABLE titanic_iceberg_1
+  USING TEMPLATE (
+    SELECT ARRAY_AGG(OBJECT_CONSTRUCT(*))
+      FROM TABLE(
+        INFER_SCHEMA(
+          LOCATION => '@azure_stage/raw_data_files/'
+          ,FILE_FORMAT => 'iceberg_parquet_format'
+          ,FILES => ('titanic.parquet')
+          ,KIND => 'ICEBERG'
+        )
+      )
+  )
+  CATALOG = 'SNOWFLAKE'
+  EXTERNAL_VOLUME = 'azure_adls_external_volume'
+  BASE_LOCATION = 'iceberg/titanic_iceberg_1/'
+  ICEBERG_VERSION = 3;
+```
+
+**32.** Verify the table was created (it will be empty initially):
+
+```sql
+DESCRIBE TABLE titanic_iceberg_1;
+SELECT * FROM titanic_iceberg_1;
+```
+
+**33.** Load data from the staged Parquet file into the Iceberg table:
+
+```sql
+COPY INTO titanic_iceberg_1
+  FROM @azure_stage/raw_data_files/
+  FILES = ('titanic.parquet')
+  FILE_FORMAT = (FORMAT_NAME = 'iceberg_parquet_format')
+  LOAD_MODE = ADD_FILES_COPY
+  MATCH_BY_COLUMN_NAME = CASE_SENSITIVE;
+```
+
+**34.** Query your data:
+
+```sql
+SELECT * FROM titanic_iceberg_1;
 ```
