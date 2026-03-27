@@ -53,7 +53,7 @@ Create an Azure Storage Account with ADLS Gen2 to store Iceberg tables written b
 
 **2.** Click **Create**.
 
-<img src="images/02-click-create.png" alt="Click Create" width="55%">
+<img src="images/02-click-create.png" alt="Click Create" width="45%">
 
 <br>
 
@@ -123,13 +123,13 @@ This setting applies to Azure Files, which we are not using in this setup.
 
 **9.** Navigate to **Review + create**, review all selections, and click **Create**.
 
-<img src="images/09-review-and-create.png" alt="Review and Create" width="75%">
+<img src="images/09-review-and-create.png" alt="Review and Create" width="55%">
 
 <br>
 
 **10.** Once deployment completes, click **Go to resource**.
 
-<img src="images/10-deployment-complete.png" alt="Deployment Complete" width="75%">
+<img src="images/10-deployment-complete.png" alt="Deployment Complete" width="65%">
 
 ### Create a Container
 
@@ -167,13 +167,13 @@ Create an Azure service principal so Fivetran can write Iceberg data to your ADL
 
 **14.** In the Azure Portal, search for **App registrations** and select it.
 
-<img src="images/14-search-app-registrations.png" alt="Search App Registrations" width="45%">
+<img src="images/14-search-app-registrations.png" alt="Search App Registrations" width="35%">
 
 <br>
 
 **15.** Click **+ New registration**.
 
-<img src="images/15-new-registration.png" alt="New Registration" width="45%">
+<img src="images/15-new-registration.png" alt="New Registration" width="35%">
 
 <br>
 
@@ -287,13 +287,13 @@ Set up a Fivetran destination to write Iceberg tables to your ADLS container.
 
 **30.** Search for **Azure Data Lake Storage** and click **Set up**.
 
-<img src="images/30-search-adls-destination.png" alt="Search ADLS Destination" width="75%">
+<img src="images/30-search-adls-destination.png" alt="Search ADLS Destination" width="65%">
 
 <br>
 
 **31.** Give the new destination a descriptive name.
 
-<img src="images/31-name-destination.png" alt="Name Destination" width="60%">
+<img src="images/31-name-destination.png" alt="Name Destination" width="50%">
 
 <br>
 
@@ -326,7 +326,7 @@ Set up a Fivetran destination to write Iceberg tables to your ADLS container.
 !!! success "Destination Configured"
     Your Fivetran ADLS destination is now configured and ready to receive data as Iceberg tables.
 
-<img src="images/34-save-test-destination.png" alt="Save and Test Destination" width="70%">
+<img src="images/34-save-test-destination.png" alt="Save and Test Destination" width="60%">
 
 ### Create a Source Connection
 
@@ -334,7 +334,7 @@ Set up a Fivetran destination to write Iceberg tables to your ADLS container.
 
 **35.** Navigate to the **Connections** tab in the left-hand sidebar.
 
-<img src="images/35-connectors-tab.png" alt="Connectors Tab" width="25%">
+<img src="images/35-connectors-tab.png" alt="Connectors Tab" width="15%">
 
 <br>
 
@@ -346,7 +346,7 @@ Set up a Fivetran destination to write Iceberg tables to your ADLS container.
 
 **37.** Click **+ Add connection** in the top right-hand corner.
 
-<img src="images/37-add-connection.png" alt="Add Connection" width="25%">
+<img src="images/37-add-connection.png" alt="Add Connection" width="15%">
 
 <br>
 
@@ -367,19 +367,19 @@ Set up a Fivetran destination to write Iceberg tables to your ADLS container.
 !!! note "Source-Specific"
     The configuration fields will vary depending on the source connector you selected. Refer to the [Fivetran documentation](https://fivetran.com/docs/connectors) for your specific source.
 
-<img src="images/40-configure-source.png" alt="Configure Source" width="90%">
+<img src="images/40-configure-source.png" alt="Configure Source" width="80%">
 
 <br>
 
 **41.** Copy the Fivetran IPs listed and whitelist them in your source's firewall so that Fivetran can access it. Once whitelisted, click **Save & Test**.
 
-<img src="images/41-fivetran-ips-save-test.png" alt="Fivetran IPs and Save & Test" width="85%">
+<img src="images/41-fivetran-ips-save-test.png" alt="Fivetran IPs and Save & Test" width="75%">
 
 <br>
 
 **42.** After whitelisting the Fivetran IPs on your firewall, test the connection and ensure all connection tests pass. Click **Continue**.
 
-<img src="images/42-connection-tests-passed.png" alt="Connection Tests Passed" width="60%">
+<img src="images/42-connection-tests-passed.png" alt="Connection Tests Passed" width="50%">
 
 <br>
 
@@ -391,7 +391,7 @@ Set up a Fivetran destination to write Iceberg tables to your ADLS container.
 
 **44.** Determine how you want Fivetran to detect changes in your source data.
 
-<img src="images/44-determine-changes.png" alt="Determine Changes" width="65%">
+<img src="images/44-determine-changes.png" alt="Determine Changes" width="55%">
 
 <br>
 
@@ -488,7 +488,7 @@ WHERE "property" = 'STORAGE_LOCATION_1';
 
 Select the application, then click **Select** at the bottom. Leave **Conditions** as-is and click **Review + assign**.
 
-<img src="images/53-select-snowflake-app-member.png" alt="Select Snowflake App Member" width="70%">
+<img src="images/53-select-snowflake-app-member.png" alt="Select Snowflake App Member" width="60%">
 
 <br>
 
@@ -529,7 +529,7 @@ CREATE OR REPLACE DATABASE iceberg_fivetran_adls
 !!! success "Catalog-Linked Database Created"
     Your catalog-linked database is now created. Snowflake will auto-discover schemas and tables from the Fivetran Iceberg catalog.
 
-<img src="images/55-catalog-linked-database-created.png" alt="Catalog-Linked Database Created" width="50%">
+<img src="images/55-catalog-linked-database-created.png" alt="Catalog-Linked Database Created" width="40%">
 
 <br>
 
@@ -545,7 +545,7 @@ DESCRIBE DATABASE iceberg_fivetran_adls;
 
 **57.** Navigate to the **Database Explorer** in Snowflake to see the new catalog-linked database, its schemas, and tables. As new data arrives through the linked catalog, it will automatically be queryable and discoverable here — no manual table creation required.
 
-<img src="images/57-database-explorer.png" alt="Database Explorer" width="60%">
+<img src="images/57-database-explorer.png" alt="Database Explorer" width="50%">
 
 ---
 
@@ -558,7 +558,7 @@ Use standard SQL to query Iceberg tables stored in ADLS — no data copying requ
 
 **58.** All your data is now available to query directly in Snowflake. These are Apache Iceberg tables — an open table format — meaning they are also available for other compute engines (e.g., Spark, Trino, Flink) to query in their respective environments.
 
-<img src="images/58-query-iceberg-tables.png" alt="Query Iceberg Tables" width="45%">
+<img src="images/58-query-iceberg-tables.png" alt="Query Iceberg Tables" width="35%">
 
 <br>
 

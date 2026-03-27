@@ -28,7 +28,7 @@ Create an Azure Storage Account with ADLS Gen2 to store Snowflake-managed Iceber
 
 **1.** In the Azure Portal, search for **Storage accounts** and select it.
 
-![Search Storage Accounts](../fivetran-iceberg/images/01-search-storage-accounts.png)
+<img src="../fivetran-iceberg/images/01-search-storage-accounts.png" alt="Search Storage Accounts" width="75%">
 
 <br>
 
@@ -52,7 +52,7 @@ Create an Azure Storage Account with ADLS Gen2 to store Snowflake-managed Iceber
 
 Click **Next: Advanced**.
 
-![Basics Tab](../fivetran-iceberg/images/03-basics-tab.png)
+<img src="../fivetran-iceberg/images/03-basics-tab.png" alt="Basics Tab" width="75%">
 
 <br>
 
@@ -65,7 +65,7 @@ Click **Next: Advanced**.
 !!! tip
     Review all other settings on this tab with your internal security team.
 
-![Advanced Tab](../fivetran-iceberg/images/04-advanced-tab.png)
+<img src="../fivetran-iceberg/images/04-advanced-tab.png" alt="Advanced Tab" width="75%">
 
 <br>
 
@@ -75,7 +75,7 @@ Click **Next: Advanced**.
     Review networking settings against your internal networking requirements. Your organization
     may require private endpoints, specific firewall rules, or restricted virtual network access.
 
-![Networking Tab](../fivetran-iceberg/images/05-networking-tab.png)
+<img src="../fivetran-iceberg/images/05-networking-tab.png" alt="Networking Tab" width="75%">
 
 <br>
 
@@ -83,13 +83,13 @@ Click **Next: Advanced**.
 
 This setting applies to Azure Files, which we are not using in this setup.
 
-![Data Protection Tab](../fivetran-iceberg/images/06-data-protection-tab.png)
+<img src="../fivetran-iceberg/images/06-data-protection-tab.png" alt="Data Protection Tab" width="75%">
 
 <br>
 
 **7.** On the **Encryption** tab, all defaults were left as-is.
 
-![Encryption Tab](../fivetran-iceberg/images/07-encryption-tab.png)
+<img src="../fivetran-iceberg/images/07-encryption-tab.png" alt="Encryption Tab" width="75%">
 
 <br>
 
@@ -98,7 +98,7 @@ This setting applies to Azure Files, which we are not using in this setup.
 !!! tip
     In production, add tags that align with your organization's requirements (e.g., `Environment`, `Owner`, `CostCenter`).
 
-![Tags Tab](../fivetran-iceberg/images/08-tags-tab.png)
+<img src="../fivetran-iceberg/images/08-tags-tab.png" alt="Tags Tab" width="75%">
 
 <br>
 
@@ -118,19 +118,19 @@ This setting applies to Azure Files, which we are not using in this setup.
 
 **11.** In the left-hand pane, navigate to **Data storage** and select **Containers**.
 
-![Navigate to Containers](../fivetran-iceberg/images/11-navigate-containers.png)
+<img src="../fivetran-iceberg/images/11-navigate-containers.png" alt="Navigate to Containers" width="75%">
 
 <br>
 
 **12.** Click **+ Add container**.
 
-![Add Container](../fivetran-iceberg/images/12-add-container.png)
+<img src="../fivetran-iceberg/images/12-add-container.png" alt="Add Container" width="75%">
 
 <br>
 
 **13.** Give the container a name (e.g., `landing`) and keep all defaults. Click **Create**.
 
-![Name Container](../fivetran-iceberg/images/13-name-container.png)
+<img src="../fivetran-iceberg/images/13-name-container.png" alt="Name Container" width="75%">
 
 !!! success "Storage Setup Complete"
     Your Azure Storage Account and ADLS Gen2 container are now provisioned and ready for Snowflake to use as external storage for Iceberg tables.
@@ -141,20 +141,20 @@ This setting applies to Azure Files, which we are not using in this setup.
 
 **14.** In the Azure Portal search bar, search for **Microsoft Entra ID** and select it from the dropdown.
 
-![Search Microsoft Entra ID](images/14-search-microsoft-entra-id.png)
+<img src="images/14-search-microsoft-entra-id.png" alt="Search Microsoft Entra ID" width="75%">
 
 <br>
 
 **15.** On the **Microsoft Entra ID** overview page, locate and copy the **Directory (tenant) ID**. Save this value — you will need it when creating the external volume in Snowflake.
 
-![Copy Tenant ID](images/15-entra-id-tenant-id.png)
+<img src="images/15-entra-id-tenant-id.png" alt="Copy Tenant ID" width="75%">
 
 
 <br>
 
 **15.** On the **Microsoft Entra ID** overview page, copy your **Directory (tenant) ID** and save it — you will need this when creating the External Volume in Snowflake.
 
-![Entra ID Tenant ID](images/15-entra-id-tenant-id.png)
+<img src="images/15-entra-id-tenant-id.png" alt="Entra ID Tenant ID" width="75%">
 
 ---
 
@@ -224,19 +224,19 @@ WHERE "property" = 'STORAGE_LOCATION_1';
 - Go to **Access control (IAM)**
 - Click **Add role assignment**
 
-![IAM Add Role Assignment](images/19-iam-add-role-assignment.png)
+<img src="images/19-iam-add-role-assignment.png" alt="IAM Add Role Assignment" width="75%">
 
 <br>
 
 **20.** Search for **Storage Blob Data Contributor**, select it, and click **Next** at the bottom of the screen.
 
-![Storage Blob Data Contributor](images/20-storage-blob-data-contributor.png)
+<img src="images/20-storage-blob-data-contributor.png" alt="Storage Blob Data Contributor" width="75%">
 
 <br>
 
 **21.** Click **+ Select members**.
 
-![Select Members](images/21-select-members.png)
+<img src="images/21-select-members.png" alt="Select Members" width="75%">
 
 <br>
 
@@ -245,7 +245,7 @@ WHERE "property" = 'STORAGE_LOCATION_1';
 !!! tip "Search Only the Prefix"
     Remove everything after the underscore in the `AZURE_MULTI_TENANT_APP_NAME` value — that portion is a timestamp. Only search for the text **before** the underscore.
 
-![Search and Select Snowflake Principal](images/22-search-select-snowflake-principal.png)
+<img src="images/22-search-select-snowflake-principal.png" alt="Search and Select Snowflake Principal" width="75%">
 
 <br>
 
@@ -253,7 +253,7 @@ WHERE "property" = 'STORAGE_LOCATION_1';
 
 Wait 1–2 minutes for Azure RBAC propagation before proceeding.
 
-![Consent URL Approve](images/23-consent-url-approve.png)
+<img src="images/23-consent-url-approve.png" alt="Consent URL Approve" width="75%">
 
 <br>
 
