@@ -178,6 +178,10 @@ Reference documentation: [CREATE EXTERNAL VOLUME](https://docs.snowflake.com/en/
 
 <br>
 
+<img src="images/26b-name-directory.png" alt="Name Directory" width="75%">
+
+<br>
+
 **27.** Upload your data files to the directory you just created in Azure. You can do this directly from the Azure Portal by navigating into the directory and using the **Upload** button.
 
     Don't have sample data handy? Download these Titanic dataset files to use for testing:
