@@ -166,52 +166,7 @@ Reference documentation: [CREATE EXTERNAL VOLUME](https://docs.snowflake.com/en/
 !!! note "**You Can Also Use the Snowflake UI**"
     Rather than running SQL, you can configure the External Volume directly in the Snowflake web interface: [Configure an External Volume in the Snowflake UI](https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-external-volume-azure?utm_source=chatgpt.com#configure-an-external-volume-in-sf-web-interface)
 
-```
-
----
-
-## 7. Create an External Stage
-
-**26.** In your Azure storage container, create a new directory. Give it a name and click **Save**.
-
-<img src="images/26-create-directory.png" alt="Create Directory" width="75%">
-
-<br>
-
-<img src="images/26b-name-directory.png" alt="Name Directory" width="75%">
-
-<br>
-
-**27.** Upload your data files to the directory you just created in Azure. You can do this directly from the Azure Portal by navigating into the directory and using the **Upload** button.
-
-    Don't have sample data handy? Download these Titanic dataset files to use for testing:
-
-    - [titanic.csv](../assets/titanic.csv)
-    - [titanic.parquet](../assets/titanic.parquet)
-
-<br>
-
-**28.** Back in Snowflake, create an External Stage pointing to your Azure storage location:
-
 ```sql
-CREATE OR REPLACE STAGE raw_stage
-  STORAGE_INTEGRATION = azure_storage_integration
-  URL = 'azure://<storage_account>.blob.core.windows.net/<container>/<optional_path>/';
-```
-
-!!! warning "Use `.blob`, not `.dfs`"
-    As noted earlier, External Stages in Snowflake require the **Blob** endpoint (`.blob.core.windows.net`), not the Data Lake Storage endpoint (`.dfs.core.windows.net`).
-
-!!! tip "Keep the Path Flexible"
-    The path after the container name is optional. For maximum flexibility, consider creating the stage at a **higher-level directory** and navigating to subdirectories within the stage as needed — rather than locking the stage to a deeply nested path.
-
-Once created, you can list the files visible to the stage using:
-
-```sql
-LIST @azure_stage/raw_data_files/;
-```
-
-<!-- Remaining steps will be added -->sql
 CREATE EXTERNAL VOLUME IF NOT EXISTS my_external_volume_name 
   STORAGE_LOCATIONS =
     (
@@ -226,6 +181,12 @@ CREATE EXTERNAL VOLUME IF NOT EXISTS my_external_volume_name
   ALLOW_WRITES = TRUE
   COMMENT = 'My external volume to connect to azure for Iceberg.';
 ```
+
+!!! info "ALLOW_WRITES = TRUE"
+    Setting `ALLOW_WRITES = TRUE` allows Snowflake to write Iceberg data and metadata files back to your storage. This is required for Snowflake-managed Iceberg tables.
+
+!!! tip "Private Connectivity (Optional)"
+    If your Snowflake account uses Private Link or private connectivity to Azure, you can add `USE_PRIVATELINK_ENDPOINT = TRUE` to your storage location configuration. This is not needed for standard deployments.
 
 **17.** Once created, run the following to describe your external volume:
 
@@ -389,4 +350,37 @@ WHERE "property" IN ('AZURE_CONSENT_URL', 'AZURE_MULTI_TENANT_APP_NAME');
 
 <img src="images/26-create-directory.png" alt="Create Directory" width="75%">
 
-<!-- Remaining steps will be added -->
+<br>
+
+<img src="images/26b-name-directory.png" alt="Name Directory" width="75%">
+
+<br>
+
+**27.** Upload your data files to the directory you just created in Azure. You can do this directly from the Azure Portal by navigating into the directory and using the **Upload** button.
+
+    Don't have sample data handy? Download these Titanic dataset files to use for testing:
+
+    - [titanic.csv](../assets/titanic.csv)
+    - [titanic.parquet](../assets/titanic.parquet)
+
+<br>
+
+**28.** Back in Snowflake, create an External Stage pointing to your Azure storage location:
+
+```sql
+CREATE OR REPLACE STAGE raw_stage
+  STORAGE_INTEGRATION = azure_storage_integration
+  URL = 'azure://<storage_account>.blob.core.windows.net/<container>/<optional_path>/';
+```
+
+!!! warning "Use `.blob`, not `.dfs`"
+    As noted earlier, External Stages in Snowflake require the **Blob** endpoint (`.blob.core.windows.net`), not the Data Lake Storage endpoint (`.dfs.core.windows.net`).
+
+!!! tip "Keep the Path Flexible"
+    The path after the container name is optional. For maximum flexibility, consider creating the stage at a **higher-level directory** and navigating to subdirectories within the stage as needed — rather than locking the stage to a deeply nested path.
+
+Once created, you can list the files visible to the stage using:
+
+```sql
+LIST @azure_stage/raw_data_files/;
+```
