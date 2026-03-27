@@ -460,3 +460,104 @@ COPY INTO bronze.test.titanic_iceberg_1
 ```sql
 SELECT * FROM bronze.test.titanic_iceberg_1;
 ```
+
+---
+
+## 9. Load CSV Data into an Iceberg Table
+
+Now let's load CSV data into an Iceberg table. This uses `LOAD_MODE = FULL_INGEST`, which is the only mode that supports non-Parquet formats (CSV, JSON, Avro, ORC). Snowflake scans the CSV, converts it to Iceberg Parquet, and writes the data to the table's base location.
+
+**35.** Create a file format for reading CSV files:
+
+```sql
+CREATE OR REPLACE FILE FORMAT bronze.test.iceberg_csv_format
+  TYPE = CSV
+  PARSE_HEADER = TRUE
+  FIELD_OPTIONALLY_ENCLOSED_BY = '"';
+```
+
+**36.** Use `INFER_SCHEMA` to preview the schema from your CSV file:
+
+```sql
+SELECT *
+  FROM TABLE(
+    INFER_SCHEMA(
+      LOCATION => '@azure_stage/raw_data_files/'
+      ,FILE_FORMAT => 'iceberg_csv_format'
+      ,FILES => ('titanic.csv')
+    )
+  );
+```
+
+**37.** Attempt to create the Iceberg table using the inferred schema:
+
+```sql
+CREATE OR REPLACE ICEBERG TABLE bronze.test.titanic_iceberg_from_csv
+  USING TEMPLATE (
+    SELECT ARRAY_AGG(OBJECT_CONSTRUCT(*))
+      FROM TABLE(
+        INFER_SCHEMA(
+          LOCATION => '@azure_stage/raw_data_files/'
+          ,FILE_FORMAT => 'iceberg_csv_format'
+          ,FILES => ('titanic.csv')
+          ,KIND => 'ICEBERG'
+        )
+      )
+  )
+  CATALOG = 'SNOWFLAKE'
+  EXTERNAL_VOLUME = 'azure_adls_external_volume'
+  BASE_LOCATION = 'iceberg/titanic_iceberg_from_csv/'
+  ICEBERG_VERSION = 3;
+```
+
+!!! warning "NULL Values May Cause Errors"
+    If your CSV data contains NULL values, the `INFER_SCHEMA` approach may fail with an error like the one below. Our Titanic dataset contains NULLs, so you'll likely see this:
+
+<img src="images/35-csv-null-error.png" alt="CSV NULL Error" width="75%">
+
+<br>
+
+When this happens, you have two options:
+
+1. **Manually define the DDL** — Use the `INFER_SCHEMA` output from the previous step as a reference to create the table with explicit column definitions (shown below)
+2. **Convert CSV to Parquet first** — Convert the CSV to Parquet format (which handles NULLs natively), then load using the Parquet approach from Section 8. This will be covered in the next section.
+
+**38.** Create the Iceberg table with explicit column definitions:
+
+```sql
+CREATE OR REPLACE ICEBERG TABLE bronze.test.titanic_iceberg_from_csv (
+     PassengerId  INTEGER
+    ,Survived     INTEGER
+    ,Pclass       INTEGER
+    ,Name         STRING
+    ,Sex          STRING
+    ,Age          FLOAT
+    ,SibSp        INTEGER
+    ,Parch        INTEGER
+    ,Ticket       STRING
+    ,Fare         FLOAT
+    ,Cabin        STRING
+    ,Embarked     STRING
+)
+  CATALOG = 'SNOWFLAKE'
+  EXTERNAL_VOLUME = 'azure_adls_external_volume'
+  BASE_LOCATION = 'iceberg/titanic_iceberg_from_csv/'
+  ICEBERG_VERSION = 3;
+```
+
+**39.** Load the CSV data into the Iceberg table:
+
+```sql
+COPY INTO bronze.test.titanic_iceberg_from_csv
+  FROM @azure_stage/raw_data_files/
+  FILES = ('titanic.csv')
+  FILE_FORMAT = (FORMAT_NAME = 'iceberg_csv_format')
+  LOAD_MODE = FULL_INGEST
+  MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE;
+```
+
+**40.** Query your data:
+
+```sql
+SELECT * FROM bronze.test.titanic_iceberg_from_csv;
+```
