@@ -272,7 +272,9 @@ Ensure the output begins with `"success":true`.
 
 ## 5. Create Your First Iceberg Table
 
-Now for the fun part — let's create a Snowflake-managed Iceberg table and insert some data!
+Let's create a Snowflake-managed Iceberg table and insert some data.
+
+Reference documentation: [CREATE ICEBERG TABLE](https://docs.snowflake.com/en/sql-reference/sql/create-iceberg-table)
 
 !!! abstract "What's happening"
     Snowflake will write both the Parquet data files and Iceberg metadata files directly to your ADLS container. After inserting data, you can browse your storage account in Azure and watch the files appear in real time.
@@ -313,6 +315,8 @@ Once the insert completes, head over to your Azure storage account and navigate 
 
 If you want to use an Azure **External Stage** in Snowflake (e.g., to load or unload files), you'll also need a Storage Integration.
 
+Reference documentation: [CREATE STORAGE INTEGRATION](https://docs.snowflake.com/en/sql-reference/sql/create-storage-integration)
+
 !!! warning "Use `.blob`, not `.dfs`"
     Even though we configured the External Volume using the Data Lake Storage `.dfs.core.windows.net` endpoint, Azure External Stages in Snowflake expect the **Blob** endpoint: `.blob.core.windows.net`. Using `.dfs` won't necessarily break, but `.blob` is the correct endpoint for external stages.
 
@@ -345,6 +349,8 @@ WHERE "property" IN ('AZURE_CONSENT_URL', 'AZURE_MULTI_TENANT_APP_NAME');
 ---
 
 ## 7. Create an External Stage
+
+Reference documentation: [Create an Azure Stage](https://docs.snowflake.com/en/user-guide/data-load-azure-create-stage)
 
 **26.** In your Azure storage container, create a new directory. Give it a name and click **Save**.
 
@@ -569,12 +575,12 @@ SELECT * FROM bronze.test.titanic_iceberg_from_csv;
 As mentioned above, another approach is to convert your CSV to Parquet format first, then load the Parquet into an Iceberg table.
 
 !!! tip "Production vs. Quick Conversion"
-    In a production environment, you would typically convert CSVs to Parquet in an automated pipeline. However, for a quick and dirty conversion without adding third-party tooling, this approach works fine and can be done entirely within Snowflake.
+    In a production environment, you would typically convert CSVs to Parquet in an automated pipeline. However, for a quick and easy conversion without adding third-party tooling, this approach works fine and can be done entirely within Snowflake.
 
 **41.** Create a temporary table and ingest the CSV data:
 
 ```sql
-CREATE OR REPLACE TABLE bronze.test.titanic_convert_to_parquet
+CREATE OR REPLACE TEMPORARY TABLE bronze.test.titanic_convert_to_parquet
   USING TEMPLATE (
     SELECT ARRAY_AGG(OBJECT_CONSTRUCT(*))
       FROM TABLE(
