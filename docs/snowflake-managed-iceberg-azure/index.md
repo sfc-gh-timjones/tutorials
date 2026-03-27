@@ -300,3 +300,38 @@ Once the insert completes, head over to your Azure storage account and navigate 
     Because these are standard Iceberg tables backed by open Parquet files, they can be read by other engines — Spark, Trino, Flink, and more — directly from the same ADLS location, with no data copying required.
 
     See: [Access Iceberg tables using an external query engine](https://docs.snowflake.com/en/user-guide/tables-iceberg-access-using-external-query-engine-snowflake-horizon)
+
+---
+
+## 6. Create a Storage Integration (Optional Reference)
+
+If you want to use an Azure **External Stage** in Snowflake (e.g., to load or unload files), you'll also need a Storage Integration.
+
+!!! warning "Use `.blob`, not `.dfs`"
+    Even though we configured the External Volume using the Data Lake Storage `.dfs.core.windows.net` endpoint, Azure External Stages in Snowflake expect the **Blob** endpoint: `.blob.core.windows.net`. Using `.dfs` won't necessarily break, but `.blob` is the correct endpoint for external stages.
+
+!!! info "No Need to Repeat Consent"
+    Because you already granted Snowflake access to your storage tenant during the External Volume setup (consent URL + app registration), **you do not need to repeat those steps**. The code below is shown for visibility — the `AZURE_CONSENT_URL` and `AZURE_MULTI_TENANT_APP_NAME` steps are already complete.
+
+```sql
+USE ROLE ACCOUNTADMIN;
+
+CREATE OR REPLACE STORAGE INTEGRATION azure_storage_integration
+  TYPE = EXTERNAL_STAGE
+  STORAGE_PROVIDER = AZURE
+  ENABLED = TRUE
+  AZURE_TENANT_ID = '<tenant_id>'
+  STORAGE_ALLOWED_LOCATIONS = (
+    'azure://<STORAGE ACCOUNT NAME>.blob.core.windows.net/<CONTAINER NAME>'
+  );
+
+-- Because we already did this in the external volume setup, we don't need to do this again.
+-- Including code here for visibility.
+DESCRIBE STORAGE INTEGRATION azure_storage_integration;
+
+SELECT 
+    "property",
+    "property_value"
+FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+WHERE "property" IN ('AZURE_CONSENT_URL', 'AZURE_MULTI_TENANT_APP_NAME');
+```
