@@ -230,7 +230,7 @@ WHERE "property" = 'STORAGE_LOCATION_1';
 
 **21.** Click **+ Select members**.
 
-<img src="images/21-select-members.png" alt="Select Members" width="75%">
+<img src="images/21-select-members.png" alt="Select Members" width="60%">
 
 <br>
 
@@ -261,3 +261,40 @@ Ensure the output begins with `"success":true`.
 
 !!! success "External Volume Ready"
     Your external volume is now fully configured. You're ready to start creating Snowflake-managed Iceberg tables that can be queried by Snowflake and other engines — including Apache Spark, Trino, and Flink — emphasizing the open, interoperable nature of the Iceberg format.
+
+---
+
+## 5. Create Your First Iceberg Table
+
+Now for the fun part — let's create a Snowflake-managed Iceberg table and insert some data!
+
+!!! abstract "What's happening"
+    Snowflake will write both the Parquet data files and Iceberg metadata files directly to your ADLS container. After inserting data, you can browse your storage account in Azure and watch the files appear in real time.
+
+**25.** Run the following SQL in a Snowflake worksheet:
+
+```sql
+CREATE DATABASE IF NOT EXISTS bronze;
+CREATE SCHEMA IF NOT EXISTS test;
+
+CREATE OR REPLACE ICEBERG TABLE bronze.test.customer_sales (
+  id INT,
+  customer STRING,
+  amount NUMBER(10,2)
+)
+  CATALOG = 'SNOWFLAKE'
+  EXTERNAL_VOLUME = 'my_external_volume_name'
+  BASE_LOCATION = 'iceberg/customer_sales/'
+  ICEBERG_VERSION = 3;
+
+INSERT INTO bronze.test.customer_sales (id, customer, amount)
+VALUES
+  (1, 'Acme', 100.25),
+  (2, 'Globex', 250.00),
+  (3, 'Initech', 75.50);
+```
+
+Once the insert completes, head over to your Azure storage account and navigate to the container. You should see Iceberg metadata files and Parquet data files being written to the `BASE_LOCATION` path — proof that Snowflake is managing the full Iceberg table lifecycle in your own storage.
+
+!!! tip "Open by Design"
+    Because these are standard Iceberg tables backed by open Parquet files, they can be read by other engines — Spark, Trino, Flink, and more — directly from the same ADLS location, with no data copying required.
