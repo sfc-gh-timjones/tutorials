@@ -679,3 +679,19 @@ COPY INTO bronze.test.titanic_iceberg_2
 ```sql
 SELECT * FROM bronze.test.titanic_iceberg_2;
 ```
+
+---
+
+## Conclusion
+
+Congratulations! You've successfully configured Snowflake-managed Iceberg tables with Azure ADLS Gen2 as external storage. You now have a working setup where Snowflake manages the full Iceberg table lifecycle — writing Parquet data files and Iceberg metadata directly to your own cloud storage.
+
+!!! info "What's Next: Ingestion Automation"
+    This tutorial covered manual data loading techniques. In a production environment, you'll likely want to automate data ingestion. The following topics are out of scope for this tutorial, but are essential for building robust data pipelines:
+
+    - **[Snowpipe](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-intro)** — Continuous, serverless data ingestion
+    - **[COPY INTO](https://docs.snowflake.com/en/sql-reference/sql/copy-into-table)** — Bulk data loading
+    - **[Tasks](https://docs.snowflake.com/en/user-guide/tasks-intro)** — Scheduled SQL execution
+
+!!! tip "Openflow: Native Data Integration"
+    **[Openflow](https://docs.snowflake.com/en/user-guide/data-integration/openflow/about)** is Snowflake's native data integration tool, offering a variety of out-of-the-box connectors for seamless data ingestion from multiple sources.
