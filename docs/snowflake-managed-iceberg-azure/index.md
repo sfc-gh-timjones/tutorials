@@ -352,12 +352,13 @@ WHERE "property" IN ('AZURE_CONSENT_URL', 'AZURE_MULTI_TENANT_APP_NAME');
 
 <br>
 
-<img src="images/26b-name-directory.png" alt="Name Directory" width="22%">
+<img src="images/26b-name-directory.png" alt="Name Directory" width="38%">
 
 <br>
 
 **27.** Upload your data files to the directory you just created in Azure. You can do this directly from the Azure Portal by navigating into the directory and using the **Upload** button.
 
+!!! tip "Sample Data"
     Don't have sample data handy? Download these Titanic dataset files to use for testing:
 
     - <a href="../assets/titanic.csv" download>titanic.csv</a>
