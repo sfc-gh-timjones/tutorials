@@ -180,6 +180,11 @@ Reference documentation: [CREATE EXTERNAL VOLUME](https://docs.snowflake.com/en/
 
 **27.** Upload your data files to the directory you just created in Azure. You can do this directly from the Azure Portal by navigating into the directory and using the **Upload** button.
 
+    Don't have sample data handy? Download these Titanic dataset files to use for testing:
+
+    - [titanic.csv](../assets/titanic.csv)
+    - [titanic.parquet](../assets/titanic.parquet)
+
 <br>
 
 **28.** Back in Snowflake, create an External Stage pointing to your Azure storage location:
@@ -199,7 +204,7 @@ CREATE OR REPLACE STAGE raw_stage
 Once created, you can list the files visible to the stage using:
 
 ```sql
-LIST @raw_stage;
+LIST @azure_stage/raw_data_files/;
 ```
 
 <!-- Remaining steps will be added -->sql
