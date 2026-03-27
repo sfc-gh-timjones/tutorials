@@ -118,13 +118,13 @@ This setting applies to Azure Files, which we are not using in this setup.
 
 **11.** In the left-hand pane, navigate to **Data storage** and select **Containers**.
 
-<img src="../fivetran-iceberg/images/11-navigate-containers.png" alt="Navigate to Containers" width="38%">
+<img src="../fivetran-iceberg/images/11-navigate-containers.png" alt="Navigate to Containers" width="23%">
 
 <br>
 
 **12.** Click **+ Add container**.
 
-<img src="../fivetran-iceberg/images/12-add-container.png" alt="Add Container" width="75%">
+<img src="../fivetran-iceberg/images/12-add-container.png" alt="Add Container" width="65%">
 
 <br>
 
@@ -511,7 +511,7 @@ CREATE OR REPLACE ICEBERG TABLE bronze.test.titanic_iceberg_from_csv
 ```
 
 !!! warning "NULL Values May Cause Errors"
-    If your CSV data contains NULL values, the `INFER_SCHEMA` approach may fail with an error like the one below. Our Titanic dataset contains NULLs, so you'll likely see this:
+    If your CSV data contains NULL values, the `INFER_SCHEMA` approach will fail. Our Titanic dataset contains NULLs, so you will see this error:
 
 <img src="images/35-csv-null-error.png" alt="CSV NULL Error" width="75%">
 
