@@ -166,7 +166,17 @@ Reference documentation: [CREATE EXTERNAL VOLUME](https://docs.snowflake.com/en/
 !!! note "**You Can Also Use the Snowflake UI**"
     Rather than running SQL, you can configure the External Volume directly in the Snowflake web interface: [Configure an External Volume in the Snowflake UI](https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-external-volume-azure?utm_source=chatgpt.com#configure-an-external-volume-in-sf-web-interface)
 
-```sql
+```
+
+---
+
+## 7. Create an External Stage
+
+**26.** In your Azure storage container, create a new directory. Give it a name and click **Save**.
+
+<img src="images/26-create-directory.png" alt="Create Directory" width="75%">
+
+<!-- Remaining steps will be added -->sql
 CREATE EXTERNAL VOLUME IF NOT EXISTS my_external_volume_name 
   STORAGE_LOCATIONS =
     (
@@ -335,3 +345,13 @@ SELECT
 FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
 WHERE "property" IN ('AZURE_CONSENT_URL', 'AZURE_MULTI_TENANT_APP_NAME');
 ```
+
+---
+
+## 7. Create an External Stage
+
+**26.** In your Azure storage container, create a new directory. Give it a name and click **Save**.
+
+<img src="images/26-create-directory.png" alt="Create Directory" width="75%">
+
+<!-- Remaining steps will be added -->
