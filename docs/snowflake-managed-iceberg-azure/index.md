@@ -130,7 +130,7 @@ This setting applies to Azure Files, which we are not using in this setup.
 
 **13.** Give the container a name (e.g., `landing`) and keep all defaults. Click **Create**.
 
-<img src="../fivetran-iceberg/images/13-name-container.png" alt="Name Container" width="75%">
+<img src="../fivetran-iceberg/images/13-name-container.png" alt="Name Container" width="53%">
 
 !!! success "Storage Setup Complete"
     Your Azure Storage Account and ADLS Gen2 container are now provisioned and ready for Snowflake to use as external storage for Iceberg tables.
@@ -147,14 +147,8 @@ This setting applies to Azure Files, which we are not using in this setup.
 
 **15.** On the **Microsoft Entra ID** overview page, locate and copy the **Directory (tenant) ID**. Save this value — you will need it when creating the external volume in Snowflake.
 
-<img src="images/15-entra-id-tenant-id.png" alt="Copy Tenant ID" width="75%">
+<img src="images/15-entra-id-tenant-id.png" alt="Copy Tenant ID" width="90%">
 
-
-<br>
-
-**15.** On the **Microsoft Entra ID** overview page, copy your **Directory (tenant) ID** and save it — you will need this when creating the External Volume in Snowflake.
-
-<img src="images/15-entra-id-tenant-id.png" alt="Entra ID Tenant ID" width="75%">
 
 ---
 
