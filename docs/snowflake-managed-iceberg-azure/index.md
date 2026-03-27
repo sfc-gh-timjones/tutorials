@@ -513,7 +513,7 @@ CREATE OR REPLACE ICEBERG TABLE bronze.test.titanic_iceberg_from_csv
 !!! warning "NULL Values May Cause Errors"
     If your CSV data contains NULL values, the `INFER_SCHEMA` approach will fail. Our Titanic dataset contains NULLs, so you will see this error:
 
-<img src="images/35-csv-null-error.png" alt="CSV NULL Error" width="75%">
+<img src="images/35-csv-null-error.png" alt="CSV NULL Error" width="55%">
 
 <br>
 
@@ -560,4 +560,116 @@ COPY INTO bronze.test.titanic_iceberg_from_csv
 
 ```sql
 SELECT * FROM bronze.test.titanic_iceberg_from_csv;
+```
+
+---
+
+## 10. Convert CSV to Parquet (Quick Method)
+
+As mentioned above, another approach is to convert your CSV to Parquet format first, then load the Parquet into an Iceberg table.
+
+!!! tip "Production vs. Quick Conversion"
+    In a production environment, you would typically convert CSVs to Parquet in an automated pipeline. However, for a quick and dirty conversion without adding third-party tooling, this approach works fine and can be done entirely within Snowflake.
+
+**41.** Create a temporary table and ingest the CSV data:
+
+```sql
+CREATE OR REPLACE TABLE bronze.test.titanic_convert_to_parquet
+  USING TEMPLATE (
+    SELECT ARRAY_AGG(OBJECT_CONSTRUCT(*))
+      FROM TABLE(
+        INFER_SCHEMA(
+          LOCATION => '@azure_stage/raw_data_files/'
+          ,FILE_FORMAT => 'iceberg_csv_format'
+          ,FILES => ('titanic.csv')
+        )
+      )
+  );
+```
+
+**42.** Load data into the temp table and verify:
+
+```sql
+COPY INTO bronze.test.titanic_convert_to_parquet
+  FROM @azure_stage/raw_data_files/
+  FILES = ('titanic.csv')
+  FILE_FORMAT = (FORMAT_NAME = 'iceberg_csv_format')
+  MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE;
+
+SELECT * FROM bronze.test.titanic_convert_to_parquet;
+```
+
+**43.** Unload the data back to cloud storage as Parquet:
+
+```sql
+COPY INTO @azure_stage/raw_data_files/csv_to_parquet/titanic_
+  FROM bronze.test.titanic_convert_to_parquet
+  FILE_FORMAT = (TYPE = PARQUET)
+  HEADER = TRUE
+  OVERWRITE = TRUE;
+```
+
+**44.** Drop the temp table (no longer needed):
+
+```sql
+DROP TABLE bronze.test.titanic_convert_to_parquet;
+```
+
+**45.** Verify the schema from the newly created Parquet file:
+
+```sql
+SELECT *
+  FROM TABLE(
+    INFER_SCHEMA(
+      LOCATION => '@azure_stage/raw_data_files/csv_to_parquet/'
+      ,FILE_FORMAT => 'iceberg_parquet_format'
+      --,FILES => ('file_name.parquet') --Commenting out, not needed.
+      ,KIND => 'ICEBERG'
+    )
+  );
+```
+
+**46.** Create the Iceberg table from the newly created Parquet file:
+
+```sql
+CREATE OR REPLACE ICEBERG TABLE bronze.test.titanic_iceberg_2
+  USING TEMPLATE (
+    SELECT ARRAY_AGG(OBJECT_CONSTRUCT(*))
+      FROM TABLE(
+        INFER_SCHEMA(
+          LOCATION => '@azure_stage/raw_data_files/csv_to_parquet/'
+          ,FILE_FORMAT => 'iceberg_parquet_format'
+          --,FILES => ('file_name.parquet') --Commenting out, not needed.
+          ,KIND => 'ICEBERG'
+        )
+      )
+  )
+  CATALOG = 'SNOWFLAKE'
+  EXTERNAL_VOLUME = 'azure_adls_external_volume'
+  BASE_LOCATION = 'iceberg/titanic_iceberg_2/'
+  ICEBERG_VERSION = 3;
+```
+
+**47.** Verify the table was created (it will be empty initially):
+
+```sql
+DESCRIBE TABLE bronze.test.titanic_iceberg_2;
+SELECT * FROM bronze.test.titanic_iceberg_2;
+```
+
+**48.** Load data from the converted Parquet file:
+
+```sql
+COPY INTO bronze.test.titanic_iceberg_2
+  FROM @azure_stage/raw_data_files/csv_to_parquet/
+  --FILES => ('file_name.parquet') --Commenting out, not needed.
+  FILE_FORMAT = (FORMAT_NAME = 'iceberg_parquet_format')
+  LOAD_MODE = ADD_FILES_COPY
+  MATCH_BY_COLUMN_NAME = CASE_SENSITIVE;
+```
+
+**49.** Query your data:
+
+```sql
+SELECT * FROM bronze.test.titanic_iceberg_2;
 ```
