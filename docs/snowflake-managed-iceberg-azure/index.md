@@ -368,6 +368,9 @@ WHERE "property" IN ('AZURE_CONSENT_URL', 'AZURE_MULTI_TENANT_APP_NAME');
 
 **28.** Back in Snowflake, create an External Stage pointing to your Azure storage location:
 
+!!! tip "Keep the Path Flexible"
+    The path after the container name is optional. For maximum flexibility, consider creating the stage at a **higher-level directory** and navigating to subdirectories within the stage as needed — rather than locking the stage to a deeply nested path.
+
 ```sql
 CREATE OR REPLACE STAGE raw_stage
   STORAGE_INTEGRATION = azure_storage_integration
@@ -376,9 +379,6 @@ CREATE OR REPLACE STAGE raw_stage
 
 !!! warning "Use `.blob`, not `.dfs`"
     As noted earlier, External Stages in Snowflake require the **Blob** endpoint (`.blob.core.windows.net`), not the Data Lake Storage endpoint (`.dfs.core.windows.net`).
-
-!!! tip "Keep the Path Flexible"
-    The path after the container name is optional. For maximum flexibility, consider creating the stage at a **higher-level directory** and navigating to subdirectories within the stage as needed — rather than locking the stage to a deeply nested path.
 
 Once created, you can list the files visible to the stage using:
 
