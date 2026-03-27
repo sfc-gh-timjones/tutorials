@@ -348,7 +348,7 @@ Once the insert completes, head over to your Azure storage account and navigate 
 
 ---
 
-## 6. Create a Storage Integration (Optional Reference)
+## 6. Create a Storage Integration
 
 If you want to use an Azure **External Stage** in Snowflake (e.g., to load or unload files), you'll also need a Storage Integration.
 
