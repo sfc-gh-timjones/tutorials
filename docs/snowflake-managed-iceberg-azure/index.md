@@ -118,7 +118,7 @@ This setting applies to Azure Files, which we are not using in this setup.
 
 **11.** In the left-hand pane, navigate to **Data storage** and select **Containers**.
 
-<img src="../fivetran-iceberg/images/11-navigate-containers.png" alt="Navigate to Containers" width="75%">
+<img src="../fivetran-iceberg/images/11-navigate-containers.png" alt="Navigate to Containers" width="38%">
 
 <br>
 
