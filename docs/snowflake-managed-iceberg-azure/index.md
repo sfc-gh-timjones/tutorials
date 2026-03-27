@@ -397,7 +397,7 @@ This example demonstrates how to create an Iceberg table by inferring the schema
 **29.** First, create a file format for reading Parquet files:
 
 ```sql
-CREATE OR REPLACE FILE FORMAT iceberg_parquet_format
+CREATE OR REPLACE FILE FORMAT bronze.test.iceberg_parquet_format
   TYPE = PARQUET
   USE_VECTORIZED_SCANNER = TRUE;
 ```
@@ -419,7 +419,7 @@ SELECT *
 **31.** Create the Iceberg table using the inferred schema:
 
 ```sql
-CREATE OR REPLACE ICEBERG TABLE titanic_iceberg_1
+CREATE OR REPLACE ICEBERG TABLE bronze.test.titanic_iceberg_1
   USING TEMPLATE (
     SELECT ARRAY_AGG(OBJECT_CONSTRUCT(*))
       FROM TABLE(
@@ -440,14 +440,14 @@ CREATE OR REPLACE ICEBERG TABLE titanic_iceberg_1
 **32.** Verify the table was created (it will be empty initially):
 
 ```sql
-DESCRIBE TABLE titanic_iceberg_1;
-SELECT * FROM titanic_iceberg_1;
+DESCRIBE TABLE bronze.test.titanic_iceberg_1;
+SELECT * FROM bronze.test.titanic_iceberg_1;
 ```
 
 **33.** Load data from the staged Parquet file into the Iceberg table:
 
 ```sql
-COPY INTO titanic_iceberg_1
+COPY INTO bronze.test.titanic_iceberg_1
   FROM @azure_stage/raw_data_files/
   FILES = ('titanic.parquet')
   FILE_FORMAT = (FORMAT_NAME = 'iceberg_parquet_format')
@@ -458,5 +458,5 @@ COPY INTO titanic_iceberg_1
 **34.** Query your data:
 
 ```sql
-SELECT * FROM titanic_iceberg_1;
+SELECT * FROM bronze.test.titanic_iceberg_1;
 ```
