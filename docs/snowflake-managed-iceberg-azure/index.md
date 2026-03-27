@@ -352,7 +352,7 @@ WHERE "property" IN ('AZURE_CONSENT_URL', 'AZURE_MULTI_TENANT_APP_NAME');
 
 <br>
 
-<img src="images/26b-name-directory.png" alt="Name Directory" width="75%">
+<img src="images/26b-name-directory.png" alt="Name Directory" width="22%">
 
 <br>
 
@@ -360,8 +360,8 @@ WHERE "property" IN ('AZURE_CONSENT_URL', 'AZURE_MULTI_TENANT_APP_NAME');
 
     Don't have sample data handy? Download these Titanic dataset files to use for testing:
 
-    - [titanic.csv](../assets/titanic.csv)
-    - [titanic.parquet](../assets/titanic.parquet)
+    - <a href="../assets/titanic.csv" download>titanic.csv</a>
+    - <a href="../assets/titanic.parquet" download>titanic.parquet</a>
 
 <br>
 
