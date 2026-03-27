@@ -298,3 +298,5 @@ Once the insert completes, head over to your Azure storage account and navigate 
 
 !!! tip "Open by Design"
     Because these are standard Iceberg tables backed by open Parquet files, they can be read by other engines — Spark, Trino, Flink, and more — directly from the same ADLS location, with no data copying required.
+
+    See: [Access Iceberg tables using an external query engine](https://docs.snowflake.com/en/user-guide/tables-iceberg-access-using-external-query-engine-snowflake-horizon)
