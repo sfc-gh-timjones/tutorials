@@ -163,11 +163,16 @@ Reference documentation: [CREATE EXTERNAL VOLUME](https://docs.snowflake.com/en/
 
 **16.** Run the following SQL, replacing the placeholder values with your own:
 
+!!! warning "Custom Naming"
+    You can name the external volume whatever you like. This tutorial uses `azure_adls_external_volume`. If you choose a different name, you'll need to update references throughout the remaining steps.
+
 !!! note "**You Can Also Use the Snowflake UI**"
     Rather than running SQL, you can configure the External Volume directly in the Snowflake web interface: [Configure an External Volume in the Snowflake UI](https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-external-volume-azure?utm_source=chatgpt.com#configure-an-external-volume-in-sf-web-interface)
 
 ```sql
-CREATE EXTERNAL VOLUME IF NOT EXISTS my_external_volume_name 
+USE ROLE ACCOUNTADMIN;
+
+CREATE EXTERNAL VOLUME IF NOT EXISTS azure_adls_external_volume 
   STORAGE_LOCATIONS =
     (
       (
@@ -191,7 +196,7 @@ CREATE EXTERNAL VOLUME IF NOT EXISTS my_external_volume_name
 **17.** Once created, run the following to describe your external volume:
 
 ```sql
-DESCRIBE EXTERNAL VOLUME my_external_volume_name;
+DESCRIBE EXTERNAL VOLUME azure_adls_external_volume;
 ```
 
 <br>
@@ -260,7 +265,7 @@ Wait 1–2 minutes for Azure RBAC propagation before proceeding.
 **24.** Back in Snowflake, run the following to verify the external volume is working:
 
 ```sql
-SELECT SYSTEM$VERIFY_EXTERNAL_VOLUME('my_external_volume_name') AS Test;
+SELECT SYSTEM$VERIFY_EXTERNAL_VOLUME('azure_adls_external_volume') AS Test;
 ```
 
 Ensure the output begins with `"success":true`.
@@ -284,6 +289,8 @@ Reference documentation: [CREATE ICEBERG TABLE](https://docs.snowflake.com/en/sq
 **25.** Run the following SQL in a Snowflake worksheet:
 
 ```sql
+USE ROLE ACCOUNTADMIN;
+
 CREATE DATABASE IF NOT EXISTS bronze;
 CREATE SCHEMA IF NOT EXISTS test;
 
@@ -293,7 +300,7 @@ CREATE OR REPLACE ICEBERG TABLE bronze.test.customer_sales (
   amount NUMBER(10,2)
 )
   CATALOG = 'SNOWFLAKE'
-  EXTERNAL_VOLUME = 'my_external_volume_name'
+  EXTERNAL_VOLUME = 'azure_adls_external_volume'
   BASE_LOCATION = 'iceberg/customer_sales/'
   ICEBERG_VERSION = 3;
 
@@ -382,7 +389,9 @@ Reference documentation: [Create an Azure Stage](https://docs.snowflake.com/en/u
     The path after the container name is optional. For maximum flexibility, consider creating the stage at a **higher-level directory** and navigating to subdirectories within the stage as needed — rather than locking the stage to a deeply nested path.
 
 ```sql
-CREATE OR REPLACE STAGE raw_stage
+USE ROLE ACCOUNTADMIN;
+
+CREATE OR REPLACE STAGE azure_stage
   STORAGE_INTEGRATION = azure_storage_integration
   URL = 'azure://<storage_account>.blob.core.windows.net/<container>/<optional_path>/';
 ```
@@ -405,6 +414,8 @@ This example demonstrates how to create an Iceberg table by inferring the schema
 **29.** First, create a file format for reading Parquet files:
 
 ```sql
+USE ROLE ACCOUNTADMIN;
+
 CREATE OR REPLACE FILE FORMAT bronze.test.iceberg_parquet_format
   TYPE = PARQUET
   USE_VECTORIZED_SCANNER = TRUE;
@@ -478,6 +489,8 @@ Now let's load CSV data into an Iceberg table. This uses `LOAD_MODE = FULL_INGES
 **35.** Create a file format for reading CSV files:
 
 ```sql
+USE ROLE ACCOUNTADMIN;
+
 CREATE OR REPLACE FILE FORMAT bronze.test.iceberg_csv_format
   TYPE = CSV
   PARSE_HEADER = TRUE
@@ -582,6 +595,8 @@ As mentioned above, another approach is to convert your CSV to Parquet format fi
 **41.** Create a temporary table and ingest the CSV data:
 
 ```sql
+USE ROLE ACCOUNTADMIN;
+
 CREATE OR REPLACE TEMPORARY TABLE bronze.test.titanic_convert_to_parquet
   USING TEMPLATE (
     SELECT ARRAY_AGG(OBJECT_CONSTRUCT(*))
@@ -692,8 +707,7 @@ Congratulations! You've successfully configured Snowflake-managed Iceberg tables
     This tutorial covered manual data loading techniques. In a production environment, you'll likely want to automate data ingestion. The following topics are out of scope for this tutorial, but are essential for building robust data pipelines:
 
     - **[Snowpipe](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-intro)** — Continuous, serverless data ingestion
-    - **[COPY INTO](https://docs.snowflake.com/en/sql-reference/sql/copy-into-table)** — Bulk data loading
-    - **[Tasks](https://docs.snowflake.com/en/user-guide/tasks-intro)** — Scheduled SQL execution
+    - **[COPY INTO](https://docs.snowflake.com/en/sql-reference/sql/copy-into-table) + [Tasks](https://docs.snowflake.com/en/user-guide/tasks-intro)** — Scheduled bulk data loading
 
 !!! tip "Openflow: Native Data Integration"
     **[Openflow](https://docs.snowflake.com/en/user-guide/data-integration/openflow/about)** is Snowflake's native data integration tool, offering a variety of out-of-the-box connectors for seamless data ingestion from multiple sources.
