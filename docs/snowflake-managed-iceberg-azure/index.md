@@ -176,6 +176,32 @@ Reference documentation: [CREATE EXTERNAL VOLUME](https://docs.snowflake.com/en/
 
 <img src="images/26-create-directory.png" alt="Create Directory" width="75%">
 
+<br>
+
+**27.** Upload your data files to the directory you just created in Azure. You can do this directly from the Azure Portal by navigating into the directory and using the **Upload** button.
+
+<br>
+
+**28.** Back in Snowflake, create an External Stage pointing to your Azure storage location:
+
+```sql
+CREATE OR REPLACE STAGE raw_stage
+  STORAGE_INTEGRATION = azure_storage_integration
+  URL = 'azure://<storage_account>.blob.core.windows.net/<container>/<optional_path>/';
+```
+
+!!! warning "Use `.blob`, not `.dfs`"
+    As noted earlier, External Stages in Snowflake require the **Blob** endpoint (`.blob.core.windows.net`), not the Data Lake Storage endpoint (`.dfs.core.windows.net`).
+
+!!! tip "Keep the Path Flexible"
+    The path after the container name is optional. For maximum flexibility, consider creating the stage at a **higher-level directory** and navigating to subdirectories within the stage as needed — rather than locking the stage to a deeply nested path.
+
+Once created, you can list the files visible to the stage using:
+
+```sql
+LIST @raw_stage;
+```
+
 <!-- Remaining steps will be added -->sql
 CREATE EXTERNAL VOLUME IF NOT EXISTS my_external_volume_name 
   STORAGE_LOCATIONS =
