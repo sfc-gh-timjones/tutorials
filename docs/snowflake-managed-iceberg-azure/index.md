@@ -223,7 +223,13 @@ WHERE "property" = 'STORAGE_LOCATION_1';
 
 ## 4. Grant Snowflake Access to the Storage Location
 
-**19.** In the Azure Portal:
+**19.** Copy the `AZURE_CONSENT_URL` from the query results and paste it into your browser. Sign in as an Azure Admin and approve the application. This allows Snowflake's service principal to access your tenant.
+
+<img src="images/23-consent-url-approve.png" alt="Consent URL Approve" width="75%">
+
+<br>
+
+**20.** In the Azure Portal:
 
 - Open your **storage account**
 - Go to **Access control (IAM)**
@@ -233,32 +239,26 @@ WHERE "property" = 'STORAGE_LOCATION_1';
 
 <br>
 
-**20.** Search for **Storage Blob Data Contributor**, select it, and click **Next** at the bottom of the screen.
+**21.** Search for **Storage Blob Data Contributor**, select it, and click **Next** at the bottom of the screen.
 
 <img src="images/20-storage-blob-data-contributor.png" alt="Storage Blob Data Contributor" width="75%">
 
 <br>
 
-**21.** Click **+ Select members**.
+**22.** Click **+ Select members**.
 
 <img src="images/21-select-members.png" alt="Select Members" width="60%">
 
 <br>
 
-**22.** Search for the Snowflake-generated service principal using the value from `AZURE_MULTI_TENANT_APP_NAME`, select it, then click **Review + assign** to finish.
+**23.** Search for the Snowflake-generated service principal using the value from `AZURE_MULTI_TENANT_APP_NAME`, select it, then click **Review + assign** to finish.
 
 !!! tip "Search Only the Prefix"
     Remove everything after the underscore in the `AZURE_MULTI_TENANT_APP_NAME` value — that portion is a timestamp. Only search for the text **before** the underscore.
 
 <img src="images/22-search-select-snowflake-principal.png" alt="Search and Select Snowflake Principal" width="75%">
 
-<br>
-
-**23.** Copy the `AZURE_CONSENT_URL` from the query results and paste it into your browser. Sign in as an Azure Admin and approve the application. This allows Snowflake's service principal to access your tenant.
-
 Wait 1–2 minutes for Azure RBAC propagation before proceeding.
-
-<img src="images/23-consent-url-approve.png" alt="Consent URL Approve" width="75%">
 
 <br>
 
