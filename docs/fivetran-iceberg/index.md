@@ -466,22 +466,26 @@ WHERE "property" = 'STORAGE_LOCATION_1';
 
 ### Grant Snowflake Access to ADLS
 
-!!! abstract "What's happening"
-    When you created the external volume, Snowflake generated its own service principal in Azure. You now need to grant this Snowflake-managed identity the same storage permissions so Snowflake can read the Iceberg files written by Fivetran.
+**51.** Copy the `AZURE_CONSENT_URL` from the query results and paste it into your browser. Sign in as an Azure Admin and approve the application. This allows Snowflake's service principal to access your tenant.
 
-**51.** Navigate back to your storage account in the Azure Portal. Go to **Access Control (IAM)** and click **Add role assignment**.
+<br>
+
+!!! abstract "What's happening"
+    After you grant admin consent, Azure will create a corresponding service principal in your tenant. You must then grant this identity storage permissions so Snowflake can read the Iceberg files.
+
+**52.** Navigate back to your storage account in the Azure Portal. Go to **Access Control (IAM)** and click **Add role assignment**.
 
 ![IAM Add Role Assignment](images/51-iam-add-role-assignment.png)
 
 <br>
 
-**52.** Search for **Storage Blob Data Contributor**, select the role, and click **Next**.
+**53.** Search for **Storage Blob Data Contributor**, select the role, and click **Next**.
 
 ![Storage Blob Data Contributor](images/52-storage-blob-data-contributor.png)
 
 <br>
 
-**53.** Under **Members**, click **+ Select members**. Search for the Snowflake-generated service principal using the value from `AZURE_MULTI_TENANT_APP_NAME` (name will vary).
+**54.** Under **Members**, click **+ Select members**. Search for the Snowflake-generated service principal using the value from `AZURE_MULTI_TENANT_APP_NAME` (name will vary).
 
 !!! tip
     Remove everything after the underscore in the `AZURE_MULTI_TENANT_APP_NAME` value — that portion is a timestamp. Only search for the text before the underscore.
@@ -489,10 +493,6 @@ WHERE "property" = 'STORAGE_LOCATION_1';
 Select the application, then click **Select** at the bottom. Leave **Conditions** as-is and click **Review + assign**.
 
 <img src="images/53-select-snowflake-app-member.png" alt="Select Snowflake App Member" width="60%">
-
-<br>
-
-**54.** Copy the `AZURE_CONSENT_URL` from the query results and paste it into your browser. Sign in as an Azure Admin and approve the application. This allows Snowflake's service principal to access your tenant.
 
 <br>
 
