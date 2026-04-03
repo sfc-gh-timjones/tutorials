@@ -494,7 +494,9 @@ Select the application, then click **Select** at the bottom. Leave **Conditions*
 
 **54.** Copy the `AZURE_CONSENT_URL` from the query results and paste it into your browser. Sign in as an Azure Admin and approve the application. This allows Snowflake's service principal to access your tenant.
 
-Wait 1–2 minutes for Azure RBAC propagation, then run the following in Snowflake to verify the external volume is working:
+<br>
+
+**55.** Wait 1–2 minutes for Azure RBAC propagation, then run the following in Snowflake to verify the external volume is working:
 
 ```sql
 SELECT SYSTEM$VERIFY_EXTERNAL_VOLUME('external_volume_name') as Test;
@@ -516,7 +518,7 @@ Create a catalog-linked database in Snowflake that auto-discovers schemas and ta
 !!! abstract "What's happening"
     A catalog-linked database is a Snowflake database that is backed by an external catalog — in this case, the Fivetran REST Catalog. Snowflake automatically discovers and registers all schemas and tables from the catalog. As Fivetran syncs new data, the tables appear in Snowflake without any manual DDL.
 
-**55.** Run the following command to create a catalog-linked database. Name the database based on what makes the most sense for your data source.
+**56.** Run the following command to create a catalog-linked database. Name the database based on what makes the most sense for your data source.
 
 ```sql
 CREATE OR REPLACE DATABASE iceberg_fivetran_adls
@@ -533,7 +535,7 @@ CREATE OR REPLACE DATABASE iceberg_fivetran_adls
 
 <br>
 
-**56.** Describe the database to see the schemas and tables that were auto-discovered:
+**57.** Describe the database to see the schemas and tables that were auto-discovered:
 
 ```sql
 DESCRIBE DATABASE iceberg_fivetran_adls;
@@ -543,7 +545,7 @@ DESCRIBE DATABASE iceberg_fivetran_adls;
 
 <br>
 
-**57.** Navigate to the **Database Explorer** in Snowflake to see the new catalog-linked database, its schemas, and tables. As new data arrives through the linked catalog, it will automatically be queryable and discoverable here — no manual table creation required.
+**58.** Navigate to the **Database Explorer** in Snowflake to see the new catalog-linked database, its schemas, and tables. As new data arrives through the linked catalog, it will automatically be queryable and discoverable here — no manual table creation required.
 
 <img src="images/57-database-explorer.png" alt="Database Explorer" width="50%">
 
@@ -556,13 +558,13 @@ Use standard SQL to query Iceberg tables stored in ADLS — no data copying requ
 !!! abstract "What's happening"
     Snowflake reads the Iceberg metadata and data files directly from ADLS at query time — no data is copied or ingested into Snowflake. Because Iceberg is an open table format, these same files can also be queried by other compute engines (Spark, Trino, Flink) without duplicating data.
 
-**58.** All your data is now available to query directly in Snowflake. These are Apache Iceberg tables — an open table format — meaning they are also available for other compute engines (e.g., Spark, Trino, Flink) to query in their respective environments.
+**59.** All your data is now available to query directly in Snowflake. These are Apache Iceberg tables — an open table format — meaning they are also available for other compute engines (e.g., Spark, Trino, Flink) to query in their respective environments.
 
 <img src="images/58-query-iceberg-tables.png" alt="Query Iceberg Tables" width="35%">
 
 <br>
 
-**59.** Query the data using standard SQL — it is fully queryable just like any other Snowflake table.
+**60.** Query the data using standard SQL — it is fully queryable just like any other Snowflake table.
 
 ![Query Results](images/59-query-results.png)
 
