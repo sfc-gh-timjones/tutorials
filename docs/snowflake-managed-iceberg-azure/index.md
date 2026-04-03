@@ -225,8 +225,6 @@ WHERE "property" = 'STORAGE_LOCATION_1';
 
 **19.** Copy the `AZURE_CONSENT_URL` from the query results and paste it into your browser. Sign in as an Azure Admin and approve the application. This allows Snowflake's service principal to access your tenant.
 
-<img src="images/23-consent-url-approve.png" alt="Consent URL Approve" width="75%">
-
 <br>
 
 **20.** In the Azure Portal:
@@ -269,6 +267,8 @@ SELECT SYSTEM$VERIFY_EXTERNAL_VOLUME('azure_adls_external_volume') AS Test;
 ```
 
 Ensure the output begins with `"success":true`.
+
+<img src="images/23-consent-url-approve.png" alt="Consent URL Approve" width="75%">
 
 !!! success "External Volume Ready"
     Your external volume is now fully configured. You're ready to start creating Snowflake-managed Iceberg tables that can be queried by Snowflake and other engines — including Apache Spark, Trino, and Flink — emphasizing the open, interoperable nature of the Iceberg format.
